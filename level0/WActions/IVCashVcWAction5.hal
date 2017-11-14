@@ -1,0 +1,337 @@
+external function val CalculateDiscountPercentage(val,val,val);
+external function val CalculateDiscountPercentage2(val,val,val,Boolean);
+external function string 255 FindPOSCommandText(Integer);
+external procedure DisplayIVCashItem(record IVCashVc,Integer);
+external procedure OpenNPTSPaymentOneModeTClass(Integer,LongInt,val,val,string);
+external procedure OpenNPTSPaymentBLayoutTClass(Integer,LongInt,val,val,string);
+external procedure MgrsDiscOverrideIVCashDsm();
+external procedure IVCashDClassTouchScreenCreateGC(Integer,string,string);
+external procedure ConnectToCCTerminal();
+external procedure ReprintLastCCSlip();
+remote procedure IVCashDClassTouchScreenCreditNoteRemote(record IVCashVc,var record IVCashVc);
+external procedure OpenOnHotelGuestTouchScreenOClass(Integer,LongInt,val,string,string,string);
+external procedure SetPOSWindowDisplayAmount(string,val);
+external procedure IVCashDchsum(record IVCashVc,Integer);
+external function Boolean IVCashDchrsum(record IVCashVc,Integer,Integer);
+external updating procedure RecordActionIVCash_Print(var record IVCashVc,string,Boolean);
+external procedure QTSumup(var record QTVc);
+external procedure IVCashToQT_FromPOS(record IVCashVc,var record QTVc);
+external procedure WindowFieldGotoForTouchScreen(Integer,Integer,string,Boolean);
+external procedure OpenOnAccountPaymentTouchScreenDClass(Integer,LongInt,string,string);
+external procedure CancelNPTSCashPaymentTClass();
+external procedure TouchScreenXReading;
+external procedure TouchScreenZReading;
+external procedure IVDClassTouchScreenReprint();
+external updating procedure RestAccDClassTouchScreenTransfertoSL();
+external function Integer GetSelectedPOSItemRowIndex(integer);
+external procedure RestAccDClassTouchScreenAddOrderDiscount();
+external updating procedure ProceedDeferCCTransOClass();
+external function Boolean IVCashDClassOnOverStrike(Integer,Integer);
+external function val CalculateIVCashCashAmount(record IVCashVc);
+remote function Boolean GetCustAndBal(var record CUVc,var val,var val,Integer,Integer,Integer,Integer,Integer,Integer,var Boolean);
+remote function Integer CalculateLoyaltyPointsPayment_IVCashVc(record IVCashVc,val,var val,var val,var val);
+remote procedure IVCashDClassTouchScreenReturnRemote(record IVCashVc,var record IVCashVc);
+external procedure RowCalculateTaxMatrix_IVCashVc(var record IVCashVc,Integer,row IVCashVc);
+external procedure ORSumup(var record ORVc);
+external procedure IVCashToOR_FromPOS(record IVCashVc,var record ORVc);
+remote procedure IVSumup(var record IVVc,Boolean);
+external procedure IVCashToIV_FromPOS(record IVCashVc,var record IVVc);
+external procedure CredCardReversalPOSPIVCashsmExecute(string,string);
+external procedure CredCardPOSPIVCashsmExecute(string,string);
+remote function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
+external procedure IVCashDClassTouchScreenSeniorCitizenCard();
+external procedure IVCashDClassTouchScreenLoyaltyCard;
+external updating procedure IVCashDClassTouchScreenLoyaltyPointsPayment();
+remote function Integer CustomerSalesPaymentTermType(string);
+external function Boolean VolBarcodeScan_RestAccVc(var record RestAccVc,string);
+remote procedure RestAccSumup(var record RestAccVc,string);
+external procedure RestAccDClass_RefreshStringList(Integer,record RestAccVc);
+external updating procedure RestAccDClassTouchScreenDeleteItem();
+external updating procedure RestAccDClassTouchScreenInvalidateInvoice();
+external procedure RestAccDClassTouchScreenLoyaltyPointsBonusExecute();
+external procedure RestAccDClassTouchScreenAmendLine();
+external updating procedure RestAccDClassTouchScreenVoidRowExecute(string);
+external procedure CredCardPOSPIVCashsm();
+external updating procedure ProceedChequePayTouchScreenDClass();
+external procedure GiftReceiptDClass_RefreshStringList(Integer,record GiftReceiptVc);
+external procedure IVCashDClassTouchScreenLoyaltyPointsBonusExecute();
+remote function Boolean PriceLookupVClassIVCashVc_PasteArtCode(var record RcVc,record IVCashVc);
+remote function Boolean PriceLookupVClassRestAccVc_PasteArtCode(var record RcVc,record RestAccVc);
+external procedure IVCashPasteItem(string);
+remote function Boolean IVCashVc_PasteQuant(var record IVCashVc,Integer);
+remote function Boolean IVCashVc_PasteArtCode(var record IVCashVc,Integer,Boolean,var string,var Integer);
+external updating procedure IVCashDClassTouchScreenSaveInvoice();
+forward updating procedure IVCashDClassTouchScreenButtonLogin();
+external procedure IVCashDClassTouchScreenAllInvoices();
+external procedure IVCashDClassTouchScreenOpenInvoices();
+external procedure IVCashDClassTouchScreenLookupSerialNr();
+external updating procedure IVCashDClassTouchScreenInvalidateInvoice();
+external updating procedure IVCashDClassTouchScreenTransfertoSL();
+external updating procedure IVCashDClassTouchScreenTransfertoInvoice();
+forward updating procedure IVCashDClassTouchScreenTransfertoOrder();
+forward updating procedure IVCashDClassTouchScreenTransfertoQuotation();
+external updating procedure IVCashDClassTouchScreenSplitItem();
+external procedure OpenGiftVoucherTouchScreenDClass(Integer,Integer,LongInt,val,val,string,string,string);
+external procedure OpenGiftVoucherSalesTouchScreenDClass(Integer,string,string);
+external procedure M4PadString(string,Integer,string,Boolean,var string);
+external procedure SetPOSWindowDisplay(string,string);
+external function Boolean IVCashDClassVoidRow(var record IVCashVc,Integer);
+remote function string 255 CurDrawerCode(string);
+external function val MulRateToBase1(var string,val,val,val,val,val,val,roundmode);
+external procedure OpenNPTSPaymentTClass(Integer,LongInt,val,val,string);
+external procedure OpenNPTSCashPaymentTClass(Integer,LongInt,val,val,string,string,string);
+external function Boolean IVCashPrintReceipt(Integer,var record IVCashVc,record IVCashVc,Integer,Boolean,Boolean,Integer,Integer);
+external procedure TESTHT28ENQ();
+external function Boolean CashPayTouchScreenRemote(record RcVc,record RcVc);
+external procedure IVCashDClassOnWindowRecordChange(Integer);
+remote procedure IVCashSumup(var record IVCashVc,Boolean);
+external function Boolean IVCashDClassDeleteRowTest(Integer,Integer);
+external procedure OpenSelectModifiers2WClass(Integer,string);
+external updating procedure ProceedCCPayTouchScreenDClass();
+external updating procedure ProceedCashPayTouchScreenDClass();
+external procedure OpenCashPayTouchScreenDClass(Integer,Integer,LongInt,val,val,string,string,string);
+external procedure OpenDCPayTouchScreenDClass(Integer,Integer,LongInt,val,val,val,string,string,string);
+external procedure OpenCCPayTouchScreenDClass(Integer,Integer,LongInt,val,val,val,string,string,string);
+external procedure OpenCCPayTouchScreenDClassWithVAT(Integer,Integer,LongInt,val,val,val,string,string,string,val);
+external procedure OpenChequePayTouchScreenDClass(Integer,Integer,LongInt,val,val,string,string,string);
+external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
+external function Boolean IVCashDClasstouchscreenitemEFAfter(Integer,Integer,Boolean);
+external procedure ExtractObj(string,var Integer,var string);
+external procedure IVCashDClass_RefreshStringList(Integer,record IVCashVc);
+external procedure OpenCashDrawer_IVCashVc(record IVCashVc);
+external updating procedure OpenPOSSessionsm;
+external updating procedure ClosePOSSessionsm;
+external procedure POSMoneyInsm;
+external procedure POSMoneyOutsm;
+external procedure IVCashCashupRnsm;
+remote updating function LongInt IVCashVcRecordCheck(var record IVCashVc,record IVCashVc,LongInt,LongInt);
+external updating function Boolean DoXMLExport_IVCashVc(var record IVCashVc);
+external updating procedure ProceedChangeAddressNPTSSClass();
+external updating procedure ProceedChangeTermsNPTSSClass();
+remote procedure CheckIfItemInStock(record IVCashVc,var string,var longint);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:46:41
+external procedure CancelAndOverrideLogout();// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 18:11:28
+
+global
+updating procedure IVCashDClassTouchScreenFinishIfInStockButtonRun(Boolean newf,Integer awnst)
+begin
+  Integer wn,nwn;
+  LongInt printrownr,err;
+  record IVCashVc IVCashr;
+  record IVCashVc prevIVCashr;
+  Boolean save_recordf,new_recordf;
+  record LocalMachineBlock LMb;
+  Integer wnst;
+  val prevRetValue;
+  string 255 tstr;
+  record CashierDefBlock CDb;
+  record RcVc RepSpec;
+  string 255 errormsg;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:46:02
+	
+	
+  wn = CurWindow;
+  if (WindowValid(wn)==false) then begin
+    goto LIVCashDClassTouchScreenFinishButtonRun;
+  end;
+  DeselectWindow(wn,true);
+  GetWindowRecord(wn,IVCashr);
+  
+  if (IVCashr.Invalid!=0) then begin 
+    goto LIVCashDClassTouchScreenFinishButtonRun; 
+  end;
+  if (IVCashr.OKFlag!=0) then begin 
+    goto LIVCashDClassTouchScreenFinishButtonRun; 
+  end;
+  BlockLoad(LMb);
+  BlockLoad(CDb); 
+  wnst = awnst;
+  if (wnst==-1) then begin
+    wnst = WindowState(wn);
+  end;
+  GetPrevWindowRecord(wn,prevIVCashr);
+  if (RecordValid(prevIVCashr)==false) or (prevIVCashr.SerNr<=0) then begin
+    RecordCopy(prevIVCashr,IVCashr);
+  end;
+  printrownr = StringToLongInt(GetWindowString(wn,"touchscreenitemlastrownr"));
+  if (printrownr>=0) then begin
+    if (IVCashPrintReceipt(wn,IVCashr,prevIVCashr,printrownr,false,false,LMb.IncrementalReceiptPrinting,wnst)) then begin
+    end;
+  end;
+  
+  IVCashSumup(IVCashr,true);              
+  IVCashr.OKFlag = 1;
+
+  SetRecordCheckVc("IVCashVc");
+  err = IVCashVcRecordCheck(IVCashr,prevIVCashr,wnst,1);
+  if(err==0)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:45:05
+  	CheckIfItemInStock(IVCashr,errormsg,err);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:46:07
+  	if(err>0)then begin
+  		messagebox(0,errormsg);
+  	end;
+  end;
+  if (err==0) then begin
+    if (CDb.RequireReturnCustomer!=0) then begin
+      if (IVCashr.OKFlag!=0) and (IVCashr.Sum4<0) then begin
+        if (IVCashr.CustCode==CDb.DefCustCode) or (IVCashr.CustCode==LMb.DefCustCode) then begin
+          MessageBox(21351,"");
+          err = 21351;
+        end;
+      end;
+    end;
+  end;
+  if (err==0 or RecordCheckLastErrorNo==31412) then begin
+    if (HasLocalization("HRV") and blank(IVCashr.RefStr)) then begin
+      if (DoXMLExport_IVCashVc(IVCashr)==false) then begin
+        IVCashr.OfficialSerNr = "";
+        nwn = OpenWindow("EnterRefStrDClass",0,wn,"","",RepSpec);
+        err = 1;
+      end;
+    end;
+  end;
+  if (err==0) then begin
+    if (IVCashPrintReceipt(wn,IVCashr,prevIVCashr,-1,true,true,LMb.IncrementalReceiptPrinting,wnst)==false) then begin
+//      MessageBox(22165,"");
+      err = 1;
+      new_recordf = false;
+    end;
+  end;
+  if (err==0) then begin
+    PutWindowRecord(wn,IVCashr);
+    save_recordf = true;      
+    new_recordf = newf;
+    if (save_recordf) then begin
+      if (WindowDoOK(wn,0)==false) then begin
+        IVCashr.OKFlag = 0;
+        PutWindowRecord(wn,IVCashr);
+        new_recordf = false;
+      end;
+    end;
+  end;
+  IVCashDClass_RefreshStringList(wn,IVCashr);
+  prevRetValue = IVCashr.RetValue;
+  if (new_recordf) then begin
+//    sleep(5);
+    
+    WindowDoNew(wn,0);
+    GetWindowRecord(wn,IVCashr);
+    IVCashr.RetValue = prevRetValue;
+    PutWindowString(wn,"touchscreenwindowpage",1);
+    PutWindowString(wn,"touchscreenwindowpagestack","1");
+    PutWindowString(wn,"touchscreenwindowprinterstack","*");
+    PutWindowString(wn,"CustomerDisplayData_Line1","");
+    PutWindowString(wn,"CustomerDisplayData_Line2","");    
+    PutWindowString(wn,"touchscreenitemlastrownr",-1);
+    PutWindowString(wn,"ReturnMode","false");
+    tstr = USetStr(24172) & "  ";
+    tstr = tstr & ValToString(prevRetValue,M4Val,ThousandSeparator,DecimalSeparator,0);
+    SetPOSWindowDisplay("",tstr);
+    PutWindowRecord(wn,IVCashr);
+    IVCashDClass_RefreshStringList(wn,IVCashr);
+ 
+//    ReRunWindowDef(wn);
+  end;
+
+// TESTHT28ENQ;
+LIVCashDClassTouchScreenFinishButtonRun:;  
+  return;
+end;
+
+global
+updating procedure IVCashDClassTouchScreenFinishIfInStockButton()
+begin
+  
+  IVCashDClassTouchScreenFinishIfInStockButtonRun(true,-1);
+    
+  return;
+end;
+
+global
+procedure IVCashDClassTouchScreenAddHeaderComment()
+begin
+  Integer wn,mwn;
+  record RcVc RepSpec;
+  record IVCashVc IVCashr;
+  Boolean testf;
+  
+  mwn = CurWindow;
+  RecordClear(RepSpec);
+  DeselectWindow(mwn,true);
+  GetWindowRecord(mwn,IVCashr);
+  testf = true;
+  if (IVCashr.OKFlag!=0) then begin testf = false; end;
+  if (IVCashr.Invalid!=0) then begin testf = false; end;
+  if (testf) then begin
+    RepSpec.f1 = IVCashr.InvComment;
+    wn = OpenWindow("AddHeaderCommentNPTSSClass",0,mwn,"","",RepSpec);
+    WindowFieldGoto(wn,RepSpec,-1,"f1",false);    
+  end;
+  return;
+end;
+
+
+global
+updating procedure ProceedAddHeaderComment()
+begin
+  Integer mwn,rownr,wn;
+  record RcVc RepSpec;
+  record IVVc IVr;
+  record IVVc prevIVr;
+  record IVCashVc IVCashr;
+  record IVCashVc prevIVCashr;
+  string 255 tstr;
+  
+  wn = curwindow;
+  DeselectWindow(wn,true);
+  mwn = MotherWindow(wn);
+  if (mwn!=0) then begin
+    GetWindowRecord(wn,RepSpec);
+
+		DeselectWindow(mwn,false);
+		GetWindowRecord(mwn,IVCashr);
+		switch (WindowState(mwn)) begin
+			case Rs_update:
+				GetPrevWindowRecord(mwn,prevIVCashr);
+				if (prevIVCashr.OKFlag!=0) then begin
+					CloseWindow(wn);
+					goto LProceedAddHeaderCommentNPTSSClass;
+				end;
+				if (prevIVCashr.Invalid!=0) then begin
+					CloseWindow(wn);
+					goto LProceedAddHeaderCommentNPTSSClass;
+				end;
+			case Rs_normal:
+				GetWindowRecord(mwn,prevIVCashr);
+				if (prevIVCashr.OKFlag!=0) then begin
+					CloseWindow(wn);
+					goto LProceedAddHeaderCommentNPTSSClass;
+				end;
+				if (prevIVCashr.Invalid!=0) then begin
+					CloseWindow(wn);
+					goto LProceedAddHeaderCommentNPTSSClass;
+				end;
+		end;
+	 
+		IVCashr.InvComment = RepSpec.f1;
+	 
+		PutWindowRecord(mwn,IVCashr);
+		ReRunWindowDef(mwn);
+		IVCashDClass_RefreshStringList(mwn,IVCashr);
+		CloseWindow(wn);
+		//WindowFieldGoto(mwn,IVCashr,-1,"ivcashcommand",true);
+		WindowFieldGotoForTouchScreen(mwn,-1,"ivcashcommand",false); 
+      
+  end;
+LProceedAddHeaderCommentNPTSSClass:;  
+  return;
+end;
+
+
+global
+updating procedure AddHeaderCommentNPTSSClassFunctionKey(LongInt keycode,Boolean shflag,Boolean ctrlflag)
+begin
+  switch (keycode) begin
+    case 1: 
+      ProceedAddHeaderComment;
+    case 2: 
+      CancelAndOverrideLogout;
+  end;
+end;

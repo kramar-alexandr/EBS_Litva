@@ -51,6 +51,9 @@ external function Boolean PasteCustInInv(var record IVVc);
 external function LongInt GetCurUserLastNr(string);
 external procedure GetItemSalesAccFromOR(record ORVc,var string);
 external procedure ORSumup(var record ORVc);
+external procedure FindStockValueAtPosition(string,string,string,var record PISVc);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 16:29:47
+external procedure FindStockValue(string,string,var record ItemStatusVc);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 16:35:04
+external function Boolean SerialNrAvail(string,string,string,val);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 16:59:38
 
 procedure GetItemDebtorsAcc(record ORVc ORr,var string debtorsacc)
 begin
@@ -1865,3 +1868,79 @@ begin
   return;
 end;
 
+
+global procedure CheckIfItemInStock(record IVCashVc IVCashr,var string errorstr, var longint err)// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:50:22
+begin
+	row IVCashVc IVCashrw,oldIVCashrw;
+	integer i,j,mtrw;
+	record INVc INr;
+	vector boolean vartcode;
+	val prevqty;
+	record PISVc PISr;
+	record ItemStatusVc ISr;
+	
+	errorstr = "";
+	if(blank(IVCashr.Location))then begin
+		err = 2210;
+		errorstr = "Location may not be blank";
+	end;
+	if(blank(errorstr))then begin
+		mtrw = matrowcnt(IVCashr);
+		For(i=0;i<mtrw;i=i+1) begin
+			matrowget(IVCashr,i,IVCashrw);
+			if (IVCashrw.stp==kInvoiceRowTypeNormal) then begin
+				if(nonblank(IVCashrw.ArtCode))then begin
+					INr.Code = IVCashrw.ArtCode;
+					if(readfirstmain(INr,1,true))then begin
+						if(INr.SerNrf==0)then begin
+							prevqty = 0;
+							For(j=0;j<i;j=j+1) begin
+								matrowget(IVCashr,j,oldIVCashrw);
+	  						if(oldIVCashrw.stp==kInvoiceRowTypeNormal and oldIVCashrw.ArtCode==IVCashrw.ArtCode)then begin
+	  							prevqty = prevqty + oldIVCashrw.Quant;
+	  						end;
+							end; 
+							if (nonblank(IVCashrw.PosCode)) then begin
+								FindStockValueAtPosition(IVCashrw.ArtCode,IVCashr.Location,IVCashrw.PosCode,PISr);
+								if (prevqty>PISr.LeftQty) then begin
+									err = 1397;
+									errorstr = USetStr(1397);
+									goto LCheckIfItemInStock;
+								end;
+							end;
+							FindStockValue(IVCashrw.ArtCode,IVCashr.Location,ISr);
+							if ((ISr.Instock<IVCashrw.Quant+prevqty) and (prevqty>=0)) then begin
+								err = 1247;
+								errorstr = USetStr(1247) & ": " & IVCashrw.ArtCode;
+								goto LCheckIfItemInStock;
+							end;
+							if ((ISr.Instock<IVCashrw.Quant) and (prevqty<0)) then begin
+								err = 1247;
+								errorstr = USetStr(1247) & ": " & IVCashrw.ArtCode;
+								goto LCheckIfItemInStock;
+							end;
+						end;
+						if(INr.SerNrf>0)then begin
+							prevqty = 0;
+							For(j=0;j<i;j=j+1) begin
+								matrowget(IVCashr,j,oldIVCashrw);
+	  						if(oldIVCashrw.stp==kInvoiceRowTypeNormal and oldIVCashrw.ArtCode==IVCashrw.ArtCode and oldIVCashrw.SerialNr==IVCashrw.SerialNr)then begin
+	  							prevqty = prevqty + oldIVCashrw.Quant;
+	  						end;
+							end; 
+							if (SerialNrAvail(IVCashrw.ArtCode,IVCashrw.SerialNr,IVCashr.Location,prevqty+IVCashrw.Quant)==false) then begin
+								err = 1240;
+								errorstr = USetStr(1240) & ": " & IVCashrw.ArtCode;
+								goto LCheckIfItemInStock;
+							end;
+						end;
+					end;
+				end;
+			end;
+		end; 
+	end;
+
+LCheckIfItemInStock:;
+
+return;
+end;
