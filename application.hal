@@ -1,0 +1,20 @@
+procedure SetTimedEventScheduler()
+begin
+  
+  NewPeriodicTask("burti_TimedEventsTask","burti_TimedEventsTask","burti_TimedEventsTask","",90,"");
+  
+return;
+end;
+
+global
+procedure OnApplicationStartupComplete()
+BEGIN
+  time t;
+
+  inner.OnApplicationStartupComplete;
+  if (ServerMode or SingleUserMode) then begin
+		SetTimedEventScheduler;
+  end;
+  
+RETURN;
+END;

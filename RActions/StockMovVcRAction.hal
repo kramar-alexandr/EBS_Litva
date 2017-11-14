@@ -1,0 +1,40 @@
+global
+updating function LongInt StockMovVcRecordCheck(var record StockMovVc SMp,record StockMovVc SM2p,LongInt stat,LongInt check)
+BEGIN
+  LongInt res;
+	record UserVc Userr;
+
+  res = 0;
+  res = inner.StockMovVcRecordCheck(SMp,SM2p,stat,check);
+  //START-CUST PST 2016-May-18
+  if SMp.OKFlag == 1 then begin
+    SMp.Receiver = CurrentUser;
+  end;
+  //END-CUST PST 2016-May-18
+  if res == 0 then begin
+		if SMp.OKFlag == 1 and  (UserCanAction("StockMovPerson",true)) == false  then begin
+			if blank(SMp.Receiver) then begin
+				res = -1;
+				RecordCheckError(18051,"",-1,"Receiver");
+				goto LStockMovVcRecordCheck;
+			end;
+		end;
+		Userr.Code = SMp.Receiver;
+		if ReadFirstMain(Userr,1,true) then begin
+			if Userr.Location != SMp.ToLocation and (UserCanAction("StockMovLocation",true)) == false  then begin
+				res = -1;
+				RecordCheckError(18052,"",-1,"Receiver");
+				goto LStockMovVcRecordCheck;
+			end;
+		end;
+		if blank(SMp.Sender) and (UserCanAction("StockMovPerson",true)) == false  then begin
+			res = -1;
+			RecordCheckError(18053,"",-1,"Sender");
+			goto LStockMovVcRecordCheck;
+		end;
+	end;
+LStockMovVcRecordCheck:;
+  StockMovVcRecordCheck = res;
+  RETURN;
+END;
+
