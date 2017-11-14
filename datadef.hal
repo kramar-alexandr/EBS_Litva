@@ -571,6 +571,10 @@ begin
   ArrayField(FiscalCode,M4Int,0,0);
   EndArray;
   EndBlock;
-  
+	
+	RecordAddBegin(IVCashVc,"IVCashVc_Custom");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 19:33:13
+  ArrayField(RMINumber,M4Str,25,0); 
+  EndRecordAdd;
+	  
 return;
 end;
