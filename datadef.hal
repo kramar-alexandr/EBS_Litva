@@ -575,6 +575,44 @@ begin
 	RecordAddBegin(IVCashVc,"IVCashVc_Custom");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 19:33:13
   ArrayField(RMINumber,M4Str,25,0); 
   EndRecordAdd;
-	  
+  
+  BlockBegin(CashierDefBlock,-,"CashierDefBlock3");
+		NewAutosyncBlock(kSyncDirectionToClient);
+		RecordField(DefCustCode,M4Code,20,CUVc);
+		RecordField(POSNr,M4Long,0,0);
+		RecordField(CredAcc,M4Code,10,AccVc);
+		RecordField(WriteOffAcc,M4Code,10,AccVc);
+		RecordField(StartFromLastPOSBal,M4Int,0,0);
+		RecordField(PrintDetNLTrans,M4Int,0,0);
+		RecordField(Printer,M4Set,56,0);
+		RecordField(TipPMCode,M4Code,2,0);
+		RecordField(InclTipInCashup,M4Int,0,0);
+		RecordField(InclOpenInvCashup,M4Int,0,0);
+		RecordField(RequireOpenSession,M4Int,0,0);
+		RecordField(DefInvoiceField,M4Int,0,0);
+		RecordField(UpdStockMaint,M4Int,0,0);
+		RecordField(UpdStockMaintTime,M4Time,0,0);
+		RecordField(CashSalesToFiscalControlUnit,M4Int,0,0);
+		RecordField(MultipleSessionsPerLocalMachine,M4Int,0,0);
+		RecordField(DiscountItem,M4Code,20,INVc);
+		RecordField(NoChangesPOSOnLiveSyncClient,M4Int,0,0);
+		RecordField(CashupMaint,M4Int,0,0);
+		RecordField(CashupMaintInterval,M4Time,0,0);
+		RecordField(RestAccBookedDiscount,M4Int,0,0);
+		RecordField(RestAccDiscountAcc,M4Code,10,AccVc);
+		RecordField(RestAccServiceChargeItem,M4Code,20,INVc);
+		RecordField(RestAccARAcc,M4Code,10,AccVc);
+		RecordField(RequireReturnReason,M4Int,0,0);
+		RecordField(RequireReturnCustomer,M4Int,0,0);
+		RecordField(RestUpdStockMaint,M4Int,0,0);
+		RecordField(RestUpdStockMaintTime,M4Time,0,0);
+		RecordField(RestOKSD,M4Int,0,0);
+		RecordField(RestBasePriceInclVAT,M4Int,0,0);
+		RecordField(POSOKSD,M4Int,0,0);
+		RecordField(ItemPictureCashier,M4Int,0,0);
+		RecordField(ItemPictureCustomer,M4Int,0,0);
+		RecordField(RunCashupMaintenance,M4Int,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:31:30
+  EndBlock;
+ 	
 return;
 end;

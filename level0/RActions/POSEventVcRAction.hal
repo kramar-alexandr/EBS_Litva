@@ -1,0 +1,42 @@
+external updating procedure POSEventUpdateCashupHist(record POSEventVc);
+external function Boolean SerNrTestPOSEventVc(LongInt,Date,var Boolean);
+external function Integer CheckUsers(string,string,var string,Boolean);
+external function Boolean CheckMultipleIndexField(string,Integer,Integer);
+external updating procedure CashupMn(record RcVc);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:49:31
+
+global
+updating function LongInt POSEventVcRecordSaveAfter(var record POSEventVc POSEr,record POSEventVc POSE2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  record RcVc RepSpec;
+	
+	if(POSEr.Event==2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
+		RepSpec.d1 = currentdate;
+		RepSpec.sStartTime = currenttime;
+		RepSpec.f1 = POSEr.MachineName;//LocalMachine
+		RepSpec.f4 = POSEr.Drawer;//Drawer
+		CashupMn(RepSpec);
+	end;
+	
+  POSEventUpdateCashupHist(POSEr);
+  POSEventVcRecordSaveAfter = res;
+  return;
+end;
+
+global
+updating function LongInt POSEventVcRecordUpdateAfter(var record POSEventVc POSEr,record POSEventVc POSE2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  
+  if(POSEr.Event==2 and POSE2r.Event!=2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
+		RepSpec.d1 = currentdate;
+		RepSpec.sStartTime = currenttime;
+		RepSpec.f1 = POSEr.MachineName;//LocalMachine
+		RepSpec.f4 = POSEr.Drawer;//Drawer
+		CashupMn(RepSpec);
+	end;
+  
+  POSEventUpdateCashupHist(POSEr);
+  POSEventVcRecordUpdateAfter = res;
+  return;
+end;

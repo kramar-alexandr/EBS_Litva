@@ -4725,3 +4725,217 @@ begin
   DataListColumn(1,-150,-23,AdjRight,"ArtPrice","Kaina",M423Val);
   EndWindow;
 end;
+
+window CashierDefTClass:1
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vm,vs;
+  
+  WindowBegin("POS Settings",CashierDefTClass,CGSbl,-);
+  SetWRect(64,80,700,600);
+  SetBlid(CashierDefBlock);
+  v = 6; vs = 20; h = 150; h2 = 290; vm=0;
+  EditField(h,v,70,"Default Customer",Normal,DefCustCode,false,CUSClass);
+  if (HasModNL) then begin
+    EditField(h,v+=vs,70,"Back Office A/C",Normal,CredAcc,false,AccSClass);
+    EditField(h,v+=vs,70,"Writeoff A/C",Normal,WriteOffAcc,false,AccSClass);
+  end;
+  if (HasModRest) then begin
+    EditField(h,v+=vs,70,"Tip Payment Mode",Normal,TipPMCode,false,PMSClass);
+  end;
+  if (IsEnterprise) then begin
+    EditField(h,v+=vs,70,"Printer",Normal,Printer,false,SetSClass);
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,70,"Senior Citizen Disc. Item",Normal,DiscountItem,false,INSClass);
+    end;
+  end;
+  if (HasModIN) then begin
+    if (IsEnterprise) then begin
+      ButtonFrame(h-130,v+=3*vs+2*16,490,2,"POS");
+    end else begin
+      if (HasModRest) then begin
+        ButtonFrame(h-130,v+=40,490,2,"POS");
+      end else begin
+        v = v + 40;
+      end;
+    end;
+    EditField(h,v,70,"Update #Stock# Interval",Normal,UpdStockMaintTime,false,PasteCurTime);
+//    ButtonFrame(h2,v,170,3,"Run Update #Stock# Maintenance");
+//    RadioButton(h2,v,0,0,"Manually",UpdStockMaint);
+//    RadioButton(h2,v+=16,1,0,"Periodically",UpdStockMaint);
+//    RadioButton(h2,v+=16,2,0,"When OKing POS Invoice",UpdStockMaint);
+
+    CheckBox(h2,v,0,"Run Update #Stock# Maintenance",UpdStockMaint);
+    CheckBox(h2,v+=18,0,"OK #Stock Depreciations#",POSOKSD);
+  end;
+  if (HasModRest) then begin
+    ButtonFrame(h-130,v+=40,490,2,"Restaurant");
+    EditField(h,v,70,"Update #Stock# Interval",Normal,RestUpdStockMaintTime,false,PasteCurTime);
+    CheckBox(h2,v,0,"Run Update #Stock# Maintenance",RestUpdStockMaint);
+    CheckBox(h2,v+=18,0,"OK #Stock Depreciations#",RestOKSD);
+//    CheckBox(h2,v,0,"OK #Goods Receipts#",OKPU);
+  end;
+  if (IsEnterprise) then begin
+    EditField(h,v+=(vs+5),70,"Cash Up Interval",Normal,CashupMaintInterval,false,PasteCurTime);
+    CheckBox(h2,v,0,"Run Cash Up Maintenance",CashupMaint);
+  end;
+//  EditField(h,v+=vs,60,"POS No.",Normal,POSNr,false,0);
+  ButtonFrame(h-130,v+=37+vs,220,3,"Item Pictures on Cashier Screen");
+  RadioButton(h,v,kPOSItemPictureDefault,0,"Default",ItemPictureCashier);
+  RadioButton(h,v+=16,kPOSItemPictureOn,0,"On",ItemPictureCashier);
+  RadioButton(h,v+=16,kPOSItemPictureOff,0,"Off",ItemPictureCashier);
+  ButtonFrame(h-130,v+=40,220,3,"Item Pictures on Customer Screen");
+  RadioButton(h,v,kPOSItemPictureDefault,0,"Default",ItemPictureCustomer);
+  RadioButton(h,v+=16,kPOSItemPictureOn,0,"On",ItemPictureCustomer);
+  RadioButton(h,v+=16,kPOSItemPictureOff,0,"Off",ItemPictureCustomer);
+  v = vm + 3;
+  if (HasModRest) then begin
+    CheckBox(h2,v,0,"Include Tip in Cash Up",InclTipInCashup);
+    v = v + 16;
+  end;
+  if (IsEnterprise) then begin
+    if (HasModSL) then begin
+      CheckBox(h2,v,0,"Include Open Invoice value in Cash Up",InclOpenInvCashup);
+      v = v + 16;
+    end;
+  end;
+  if (IsEnterprise) then begin
+    if (StandardHansa==false) then begin
+      CheckBox(h2,v,0,"Register Sales in Fiscal Control Unit",CashSalesToFiscalControlUnit);
+      v = v + 16;
+    end;
+    CheckBox(h2,v,0,"Allow Multiple Sessions per Machine",MultipleSessionsPerLocalMachine);
+    CheckBox(h2,v+=16,0,"Disallow Changes to OKed POS Invoices on Live Sync Clients",NoChangesPOSOnLiveSyncClient);
+  end;
+  if (IsEnterprise) then begin
+    CheckBox(h2,v+=16,0,"Require Return Reason",RequireReturnReason);
+    CheckBox(h2,v+=16,0,"Require Return Customer",RequireReturnCustomer);
+  end;
+  CheckBox(h2,v+=16,0,"Run Cash Up Maintenance when closing session",RunCashupMaintenance);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:25:12
+  if (HasModNL) then begin
+    ButtonFrame(h2,v+=45,220,2,"Cash Up from Operations Menu");
+    CheckBox(h2,v,0,"Start from Previous POS Balance",StartFromLastPOSBal);
+    if (HasModNL) then begin
+      CheckBox(h2,v+=16,0,"Print Detailed #N/L# Transaction",PrintDetNLTrans);
+    end;
+    EndFrame;
+  end;
+  if (IsEnterprise) then begin
+    CheckBox(h2,v+=155,0,"Require Open Session",RequireOpenSession);
+    ButtonFrame(h2,vm=(v+=41),170,3,"Default Field on New Invoice");
+    RadioButton(h2,v,0,0,"Default",DefInvoiceField);
+    RadioButton(h2,v+=16,1,0,"Item",DefInvoiceField);
+    if (HasSerialNumbers) then begin
+      RadioButton(h2,v+=16,2,0,"Serial No.",DefInvoiceField);
+    end;
+    EndFrame;
+  end;
+  EndWindow;
+end;
+
+window CashierDefTClass:1
+  wtag("language","LIT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vm,vs;
+  
+  WindowBegin("POS Nustatymai",CashierDefTClass,CGSbl,-);
+  SetWRect(64,80,700,600);
+  SetBlid(CashierDefBlock);
+  v = 6; vs = 20; h = 150; h2 = 290; vm=0;
+  EditField(h,v,70,"Pagr. pirkėjas",Normal,DefCustCode,false,CUSClass); 
+  if (HasModNL) then begin
+  EditField(h,v+=vs,70,"Back office sąsk.",Normal,CredAcc,false,AccSClass); 
+  EditField(h,v+=vs,70,"Nurašymo sąsk.",Normal,WriteOffAcc,false,AccSClass); 
+  end;
+  if (HasModRest) then begin
+  EditField(h,v+=vs,70,"Arbatp. mok. būdas",Normal,TipPMCode,false,PMSClass);   
+  end;
+  if (IsEnterprise) then begin
+    EditField(h,v+=vs,70,"Spausdintuvas",Normal,Printer,false,SetSClass);   
+    if (StandardHansa==false) then begin
+    EditField(h,v+=vs,70,"Pensininkų nuol. prekė",Normal,DiscountItem,false,INSClass);   
+    end;
+  end;
+  if (HasModIN) then begin
+    if (IsEnterprise) then begin
+      ButtonFrame(h-130,v+=3*vs+2*16,490,2,"POS");
+    end else begin
+      if (HasModRest) then begin
+        ButtonFrame(h-130,v+=40,490,2,"POS");
+      end else begin
+        v = v + 40;
+      end;
+    end;
+      EditField(h,v,70,"Atnaujinti sandėlio intervalą",Normal,UpdStockMaintTime,false,PasteCurTime); 
+//    ButtonFrame(h2,v,170,3,"Run Update #Stock# Maintenance");
+//    RadioButton(h2,v,0,0,"Manually",UpdStockMaint);
+//    RadioButton(h2,v+=16,1,0,"Periodically",UpdStockMaint);
+//    RadioButton(h2,v+=16,2,0,"When OKing POS Invoice",UpdStockMaint);
+
+    CheckBox(h2,v,0,"Paleisti sandėlio atnaujinimo apdorojimą",UpdStockMaint); 
+    CheckBox(h2,v+=18,0,"Nusidėvėjimai sandėlyje",POSOKSD);
+  end;
+  if (HasModRest) then begin
+    ButtonFrame(h-130,v+=40,490,2,"Restoranas");
+    EditField(h,v,70,"Atnaujinti #Sandėlį# intervalas",Normal,RestUpdStockMaintTime,false,PasteCurTime);
+    CheckBox(h2,v,0,"Vykdyti #Sandėlio# atnaujinimo apdorojimą",RestUpdStockMaint);
+    CheckBox(h2,v+=18,0,"OK #Sandėlio nurašymą#",RestOKSD);
+//    CheckBox(h2,v,0,"OK #Goods Receipts#",OKPU);
+  end;
+  if (IsEnterprise) then begin
+    EditField(h,v+=(vs+5),70,"Kasos intervalas",Normal,CashupMaintInterval,false,PasteCurTime);
+    CheckBox(h2,v,0,"Paleisti kasos uždarymo apdorojimą",CashupMaint); 
+  end;
+//  EditField(h,v+=vs,60,"POS nr.",Normal,POSNr,false,0); 
+  ButtonFrame(h-130,v+=37+vs,220,3,"Prekių pav. kasininko ekrane");
+  RadioButton(h,v,kPOSItemPictureDefault,0,"Numatytasis",ItemPictureCashier);
+  RadioButton(h,v+=16,kPOSItemPictureOn,0,"Įjungtas",ItemPictureCashier);
+  RadioButton(h,v+=16,kPOSItemPictureOff,0,"Išjungtas",ItemPictureCashier);
+  ButtonFrame(h-130,v+=40,220,3,"Prekių pav. kasininko ekrane");
+  RadioButton(h,v,kPOSItemPictureDefault,0,"Numatytasis",ItemPictureCustomer);
+  RadioButton(h,v+=16,kPOSItemPictureOn,0,"Įjungtas",ItemPictureCustomer);
+  RadioButton(h,v+=16,kPOSItemPictureOff,0,"Išjungtas",ItemPictureCustomer);
+  v = vm + 3;
+  if (HasModRest) then begin
+    CheckBox(h2,v,0,"Įtraukti arbatpinigius į kasos pajamas",InclTipInCashup);
+    v = v + 16;
+  end;
+  if (IsEnterprise) then begin
+  if (HasModSL) then begin
+    CheckBox(h2,v,0,"Įtraukti neapm. faktūros sumą į kasos pajamas",InclOpenInvCashup); 
+    v = v + 16;
+  end;
+  end;
+  if (IsEnterprise) then begin
+    if (StandardHansa==false) then begin
+    CheckBox(h2,v,0,"Registruoti pard. Fiscal Control Unit",CashSalesToFiscalControlUnit); 
+      v = v + 16;
+    end;
+    CheckBox(h2,v,0,"Leisti kelias sesijas tame pačiame įrenginyje",MultipleSessionsPerLocalMachine); 
+    CheckBox(h2,v+=16,0,"Neleisti pakeitimų patvirtinoms POS faktūroms Live Sync klientams",NoChangesPOSOnLiveSyncClient); 
+  end;
+  if (IsEnterprise) then begin
+  CheckBox(h2,v+=16,0,"Reikalauti Grąž. priež.",RequireReturnReason); 
+  CheckBox(h2,v+=16,0,"Reikalauti Grąž. pirkėjo",RequireReturnCustomer); 
+  end;
+  CheckBox(h2,v+=16,0,"Run Cash Up Maintenance when closing session",RunCashupMaintenance);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:25:12
+  if (HasModNL) then begin
+  ButtonFrame(h2,v+=45,220,2,"Kasos pajamos per Funkcijų Meniu"); 
+  CheckBox(h2,v,0,"Pradėti nuo ankstesnio POS balanso",StartFromLastPOSBal); 
+  if (HasModNL) then begin
+  CheckBox(h2,v+=16,0,"Spausdinti detalią DK operaciją",PrintDetNLTrans); 
+  end;
+    EndFrame;
+  end;
+  if (IsEnterprise) then begin
+    CheckBox(h2,v+=155,0,"Reikalauti atid. sesiją",RequireOpenSession);
+  ButtonFrame(h2,vm=(v+=41),170,3,"Privalomas laukas naujoje faktūroje"); 
+  RadioButton(h2,v,0,0,"Privaloma",DefInvoiceField); 
+  RadioButton(h2,v+=16,1,0,"Prekė",DefInvoiceField);
+    if (HasSerialNumbers) then begin
+  RadioButton(h2,v+=16,2,0,"Serij.nr.",DefInvoiceField);
+    end;
+    EndFrame;
+  end;
+  EndWindow;
+end;
