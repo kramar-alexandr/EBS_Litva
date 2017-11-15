@@ -18,6 +18,11 @@ begin
 			RepSpec.sStartTime = currenttime;
 			RepSpec.f1 = POSEr.MachineName;//LocalMachine
 			RepSpec.f4 = POSEr.Drawer;//Drawer
+			RepSpec.flags[1] = 1;
+  		RepSpec.flags[2] = 1;
+			RepSpec.flags[3] = 1;
+			RepSpec.flags[8] = 1;
+			
 			CashupMn(RepSpec);
 		end;
 	end;
@@ -41,6 +46,11 @@ begin
 			RepSpec.sStartTime = currenttime;
 			RepSpec.f1 = POSEr.MachineName;//LocalMachine
 			RepSpec.f4 = POSEr.Drawer;//Drawer
+			RepSpec.flags[1] = 1;
+  		RepSpec.flags[2] = 1;
+			RepSpec.flags[3] = 1;
+			RepSpec.flags[8] = 1;
+			
 			CashupMn(RepSpec);
 		end;
 	end;

@@ -112,7 +112,8 @@ end;
 
 enum begin //edited by BPI {  //LITWINDOWFUNCT
   kPOSButtonFinishIfInStock = 200,// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:04:18
-  kPOSButtonAddHeaderComment = 201// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 17:44:27
+  kPOSButtonAddHeaderComment = 201,// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 17:44:27
+	kPOSButtonBuyBackItem = 202// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 21:32:06
 end;
 
 global
@@ -917,6 +918,8 @@ begin
       	procstr = procstr & "TouchScreenFinishIfInStockButton";
 			case kPOSButtonAddHeaderComment:// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 17:45:42
       	procstr = procstr & "TouchScreenAddHeaderComment";
+      case kPOSButtonBuyBackItem:// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 21:52:24
+      	procstr = procstr & "TouchScreenBuyBackItem";
       case kPOSButtonTypeBlank:
         goto LLDrawPOSButtons_ENG;
     end;
@@ -1164,7 +1167,7 @@ begin
       DataListColumn(3,214,320,AdjLeft,"artcode2","",M4Code);
       DataListColumn(3,324,360,AdjLeft,"s","",M4Str);
     otherwise
-      DataListColumn(1,6,90,AdjLeft,"artcode","Code",M4Code);
+      DataListColumn(1,6,210,AdjLeft,"artcode","Code",M4Code);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 23:13:38
       if (HasJewelleryInterface) then begin
         if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
           DataListColumn(1,91,-500,AdjLeft,"spec","Description",M4Str);
@@ -1179,11 +1182,12 @@ begin
         DataListColumn(1,-205,-150,AdjRight,"rebate","Discount",M4Val);
         DataListColumn(1,-145,-21,AdjRight,"rowsum","Sum",M4Val);
       end else begin
-        DataListColumn(1,91,-340,AdjLeft,"spec","Description",M4Str);
-        DataListColumn(1,-335,-270,AdjRight,"qty","Quantity",M4Val);
-        DataListColumn(1,-265,-190,AdjRight,"price","Price",M4Val);
-        DataListColumn(1,-185,-130,AdjRight,"rebate","Disc.",M4Val);
-        DataListColumn(1,-125,-21,AdjRight,"rowsum","Sum",M4Val);
+        DataListColumn(1,211,-460,AdjLeft,"spec","Description",M4Str);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 23:15:21
+        DataListColumn(1,-455,-420,AdjRight,"qty","Qty",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 23:18:31
+        DataListColumn(1,-415,-315,AdjRight,"pricewvat","Price w-out VAT",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 23:31:43
+        DataListColumn(1,-310,-210,AdjRight,"price","Price",M4Val);
+        DataListColumn(1,-205,-140,AdjRight,"rebate","Disc.",M4Val);
+        DataListColumn(1,-135,-21,AdjRight,"rowsum","Sum",M4Val);
       end;
       DataListColumn(1,-20,-6,AdjRight,"","",M4Str); // Added to provide some extra space for scroll bar.
 

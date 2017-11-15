@@ -4178,3 +4178,115 @@ begin
       CancelAndOverrideLogout;
   end;
 end;
+
+global
+procedure IVCashDClassTouchScreenBuyBackItem()
+begin
+  Integer wn,mwn;
+  record RcVc RepSpec;
+  record IVCashVc IVCashr;
+  Boolean testf;
+  record CashierDefBlock CDb;
+  
+  
+  mwn = CurWindow;
+  RecordClear(RepSpec);
+  DeselectWindow(mwn,true);
+  GetWindowRecord(mwn,IVCashr);
+  testf = true;
+  if (IVCashr.OKFlag!=0) then begin testf = false; end;
+  if (IVCashr.Invalid!=0) then begin testf = false; end;
+  if (testf) then begin
+  	blockload(CDb);
+    RepSpec.f1 = CDb.BuyBackItemCode;
+    wn = OpenWindow("BuyBackItemNPTSSClass",0,mwn,"","",RepSpec);
+    WindowFieldGoto(wn,RepSpec,-1,"f1",false);    
+  end;
+  return;
+end;
+
+global
+updating procedure ProceedBuyBackItem()
+begin
+  Integer mwn,rownr,wn,rwcnt;
+  record RcVc RepSpec;
+  record IVCashVc IVCashr;
+  row IVCashVc IVCashrw;
+  string 255 tstr;
+  record INVc INr;
+  Integer sernrf;
+  string 255 inwarning;
+  
+  wn = curwindow;
+  DeselectWindow(wn,true);
+
+  mwn = MotherWindow(wn);
+  if (mwn!=0) then begin
+    GetWindowRecord(wn,RepSpec);
+		
+		if(blank(RepSpec.f1))then begin
+			messagebox(1058,": Item Code");
+			goto LProceedBuyBackItem;
+		end;
+		if(blank(RepSpec.f2))then begin
+			messagebox(1058,": Serial Number");
+			goto LProceedBuyBackItem;
+		end;
+		if(blank(RepSpec.f3))then begin
+			messagebox(1058,": Name");
+			goto LProceedBuyBackItem;
+		end;
+		if(RepSpec.vals0==0)then begin
+			messagebox(1058,": Value");
+			goto LProceedBuyBackItem;
+		end;
+		
+		
+		DeselectWindow(mwn,false);
+		GetWindowRecord(mwn,IVCashr);
+		if(IVCashr.OKFlag>0)then begin
+			goto LProceedBuyBackItem;
+		end;
+		if(IVCashr.Invalid>0)then begin
+			goto LProceedBuyBackItem;
+		end;
+	 	
+	 	INr.Code = RepSpec.f1;
+	 	if(readfirstmain(INr,1,true))then begin
+	 		if(INr.Terminated==0)then begin
+	 			rwcnt = matrowcnt(IVCashr);
+	 			ClearRow(IVCashr,IVCashrw,kInvoiceRowTypeNormal);
+	 			IVCashrw.ArtCode = INr.Code;
+	 			MatRowPut(IVCashr,rwcnt,IVCashrw);
+	 			if (IVCashVc_PasteArtCode(IVCashr,rwcnt,false,inwarning,sernrf)) then begin
+	 				MatRowGet(IVCashr,rwcnt,IVCashrw);
+					IVCashrw.Quant = -1.00;
+					IVCashrw.Price = RepSpec.vals0;
+					IVCashrw.SerialNr = RepSpec.f2;
+					MatRowPut(IVCashr,rwcnt,IVCashrw);
+					if (IVCashVc_PasteQuant(IVCashr,rwcnt)) then begin    
+					end;
+					MatRowGet(IVCashr,rwcnt,IVCashrw);
+					IVCashrw.Spec = RepSpec.f3;
+					MatRowPut(IVCashr,rwcnt,IVCashrw);
+					IVCashSumup(IVCashr,true);
+				end;
+	 			
+	 		end else begin
+	 			messagebox(15212,": " & RepSpec.f1);
+	 		end;
+		end else begin
+			messagebox(9588,": " & RepSpec.f1);
+		end;
+	 
+		PutWindowRecord(mwn,IVCashr);
+		ReRunWindowDef(mwn);
+		IVCashDClass_RefreshStringList(mwn,IVCashr);
+		CloseWindow(wn);
+		//WindowFieldGoto(mwn,IVCashr,-1,"ivcashcommand",true);
+		WindowFieldGotoForTouchScreen(mwn,-1,"ivcashcommand",false); 
+      
+  end;
+LProceedBuyBackItem:;  
+  return;
+end;

@@ -612,6 +612,7 @@ begin
 		RecordField(ItemPictureCashier,M4Int,0,0);
 		RecordField(ItemPictureCustomer,M4Int,0,0);
 		RecordField(RunCashupMaintenance,M4Int,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:31:30
+  	RecordField(BuyBackItemCode,M4Code,50,0);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 21:55:18
   EndBlock;
  	
 return;

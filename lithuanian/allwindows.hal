@@ -4749,6 +4749,7 @@ begin
       EditField(h,v+=vs,70,"Senior Citizen Disc. Item",Normal,DiscountItem,false,INSClass);
     end;
   end;
+  EditField(h,v+=vs,120,"Buy Back Item",Normal,BuyBackItemCode,false,INSClass);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 21:57:28
   if (HasModIN) then begin
     if (IsEnterprise) then begin
       ButtonFrame(h-130,v+=3*vs+2*16,490,2,"POS");
@@ -4856,6 +4857,8 @@ begin
     EditField(h,v+=vs,70,"Pensininkų nuol. prekė",Normal,DiscountItem,false,INSClass);   
     end;
   end;
+  EditField(h,v+=vs,120,"Buy Back Item",Normal,BuyBackItemCode,false,INSClass);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 21:57:28
+
   if (HasModIN) then begin
     if (IsEnterprise) then begin
       ButtonFrame(h-130,v+=3*vs+2*16,490,2,"POS");
@@ -4937,5 +4940,24 @@ begin
     end;
     EndFrame;
   end;
+  EndWindow;
+end;
+
+window BuyBackItemNPTSSClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 22:00:03
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,h3,h4,hm,l,v,v3,vm,vs;
+  WindowBegin("Buy Back Item",BuyBackItemNPTSSClass,CGother,RcType);
+  UseView(RcVc);
+  Modality(kModalityGlobal);//kModalityAboveParent
+  SetWRect(80,200,550,360);
+  vs = 40;
+  EditFieldTL(h=110,v=26,120,"Item Code",M4Code,Normal,50,f1,false,INSClass);
+  EditFieldTL(h=110,v=v+16,120,"Serial Number",M4Str,Normal,100,f2,false,0);
+	EditFieldTL(h=110,v=v+16,120,"Name",M4Str,Normal,50,f3,false,0);
+	EditFieldTL(h=110,v=v+16,70,"Value",M4Val,Normal,50,vals0,false,0);
+	v=v+30;
+  ColourPushButton(110,v,210,v+50,"CancelAndOverrideLogout","Cancel<BR>F2",20);
+  ColourPushButton(240,v,340,v+50,"ProceedBuyBackItem","Insert<BR>F1",20);
   EndWindow;
 end;
