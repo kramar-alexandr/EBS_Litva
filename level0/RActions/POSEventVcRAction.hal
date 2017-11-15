@@ -9,13 +9,17 @@ updating function LongInt POSEventVcRecordSaveAfter(var record POSEventVc POSEr,
 begin
   LongInt res;
   record RcVc RepSpec;// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 19:25:46
+	record CashierDefBlock CDb;
 	
-	if(POSEr.Event==2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
-		RepSpec.d1 = currentdate;
-		RepSpec.sStartTime = currenttime;
-		RepSpec.f1 = POSEr.MachineName;//LocalMachine
-		RepSpec.f4 = POSEr.Drawer;//Drawer
-		CashupMn(RepSpec);
+	blockload(CDb);
+	if(CDb.RunCashupMaintenance>0)then begin
+		if(POSEr.Event==2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
+			RepSpec.d1 = currentdate;
+			RepSpec.sStartTime = currenttime;
+			RepSpec.f1 = POSEr.MachineName;//LocalMachine
+			RepSpec.f4 = POSEr.Drawer;//Drawer
+			CashupMn(RepSpec);
+		end;
 	end;
 	
   POSEventUpdateCashupHist(POSEr);
@@ -28,13 +32,17 @@ updating function LongInt POSEventVcRecordUpdateAfter(var record POSEventVc POSE
 begin
   LongInt res;
   record RcVc RepSpec;// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 19:25:44
-  
-  if(POSEr.Event==2 and POSE2r.Event!=2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
-		RepSpec.d1 = currentdate;
-		RepSpec.sStartTime = currenttime;
-		RepSpec.f1 = POSEr.MachineName;//LocalMachine
-		RepSpec.f4 = POSEr.Drawer;//Drawer
-		CashupMn(RepSpec);
+  record CashierDefBlock CDb;
+	
+	blockload(CDb);
+  if(CDb.RunCashupMaintenance>0)then begin
+		if(POSEr.Event==2 and POSE2r.Event!=2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
+			RepSpec.d1 = currentdate;
+			RepSpec.sStartTime = currenttime;
+			RepSpec.f1 = POSEr.MachineName;//LocalMachine
+			RepSpec.f4 = POSEr.Drawer;//Drawer
+			CashupMn(RepSpec);
+		end;
 	end;
   
   POSEventUpdateCashupHist(POSEr);
