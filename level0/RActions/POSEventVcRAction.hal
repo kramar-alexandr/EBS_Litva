@@ -8,7 +8,7 @@ global
 updating function LongInt POSEventVcRecordSaveAfter(var record POSEventVc POSEr,record POSEventVc POSE2r,LongInt stat,LongInt long4)
 begin
   LongInt res;
-  record RcVc RepSpec;
+  record RcVc RepSpec;// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 19:25:46
 	
 	if(POSEr.Event==2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
 		RepSpec.d1 = currentdate;
@@ -27,6 +27,7 @@ global
 updating function LongInt POSEventVcRecordUpdateAfter(var record POSEventVc POSEr,record POSEventVc POSE2r,LongInt stat,LongInt long4)
 begin
   LongInt res;
+  record RcVc RepSpec;// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 19:25:44
   
   if(POSEr.Event==2 and POSE2r.Event!=2)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 15 November 2017 15:43:46
 		RepSpec.d1 = currentdate;
