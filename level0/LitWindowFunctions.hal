@@ -1168,7 +1168,7 @@ begin
       DataListColumn(3,214,320,AdjLeft,"artcode2","",M4Code); 
       DataListColumn(3,324,360,AdjLeft,"s","",M4Str); 
     otherwise
-    DataListColumn(1,6,90,AdjLeft,"artcode","Kodas",M4Code);
+    DataListColumn(1,6,210,AdjLeft,"artcode","Kodas",M4Code);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 00:29:12
     if (HasJewelleryInterface) then begin
       if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
         DataListColumn(1,91,-500,AdjLeft,"spec","Aprašymas",M4Str);
@@ -1183,11 +1183,12 @@ begin
       DataListColumn(1,-205,-150,AdjRight,"rebate","Nuol.",M4Val);
       DataListColumn(1,-145,-21,AdjRight,"rowsum","Suma",M4Val);
     end else begin
-      DataListColumn(1,91,-340,AdjLeft,"spec","Aprašymas",M4Str);
-      DataListColumn(1,-335,-270,AdjRight,"qty","Kiekis",M4Val);
-      DataListColumn(1,-265,-190,AdjRight,"price","Kaina",M4Val);
-      DataListColumn(1,-185,-130,AdjRight,"rebate","Nuol.",M4Val);
-      DataListColumn(1,-125,-21,AdjRight,"rowsum","Suma",M4Val);
+      DataListColumn(1,211,-460,AdjLeft,"spec","Aprašymas",M4Str);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 00:31:04
+      DataListColumn(1,-455,-420,AdjRight,"qty","Kiekis",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 00:31:06
+			DataListColumn(1,-415,-315,AdjRight,"pricewvat","Price w-out VAT",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - середа, 15 листопада 2017 р. о 23:31:43
+      DataListColumn(1,-310,-210,AdjRight,"price","Kaina",M4Val);
+      DataListColumn(1,-205,-140,AdjRight,"rebate","Nuol.",M4Val);
+      DataListColumn(1,-135,-21,AdjRight,"rowsum","Suma",M4Val);
     end;
     DataListColumn(1,-20,-6,AdjRight,"","",M4Str); // Added to provide some extra space for scroll bar.
     
