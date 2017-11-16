@@ -325,7 +325,7 @@ begin
   Modality(kModalityGlobal);//kModalityAboveParent
   SetWRect(80,200,550,360);
   vs = 40;
-  EditFieldTL(h=110,v=26,-20,"Comment",M4Code,Normal,10,f1,false,0);
+  EditFieldTL(h=110,v=26,-20,"Comment",M4Str,Normal,200,f1,false,0);
 	v=v+30;
   ColourPushButton(110,v,210,v+60,"CancelAndOverrideLogout","Cancel<BR>F2",20);
   ColourPushButton(240,v,340,v+60,"ProceedAddHeaderComment","Proceed<BR>F1",20);
