@@ -13,10 +13,19 @@ begin
   string 255 tstr;
   record LocalMachineBlock LMb;
   record EInvoiceBlock EIb;
+  record LocationVc Locr;// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 11:24:22
   
   BlockLoad(LMb);  
   if (blank(IVr.Location)) then begin
     IVr.Location = LMb.DefLocation;
+    if(nonblank(IVr.Location))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 11:24:35
+			Locr.Code = IVr.Location;
+			if(readfirstmain(Locr,1,true))then begin
+				if(nonblank(Locr.Warning))then begin
+					messagebox(0,Locr.Warning);
+				end;
+			end;
+		end;
   end;
   IVr.BranchID = LMb.BranchID;
   IVr.Objects = AddBranchObjectToObjectList(LMb.BranchID,IVr.Objects);

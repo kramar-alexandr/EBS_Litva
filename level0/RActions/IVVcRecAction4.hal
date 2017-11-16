@@ -1610,6 +1610,7 @@ begin
   Date blankd,td,td1;
   record IVVc lIVr;
   record CYBlock CYb;
+  record LocationVc Locr;// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 11:22:19
  
   BlockLoad(ARAccRec);      
   BlockLoad(IIRec);
@@ -1659,6 +1660,14 @@ begin
   IVr.LastRemDate = blankd;
   IVr.OurContact = USr.CurOurContact;
   IVr.Location = USr.Location;
+  if(nonblank(IVr.Location))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 11:24:48
+  	Locr.Code = IVr.Location;
+  	if(readfirstmain(Locr,1,true))then begin
+			if(nonblank(Locr.Warning))then begin
+				messagebox(0,Locr.Warning);
+			end;
+		end;
+  end;
   IVr.SalesMan = USr.Code;
   GetSalesGroup(IVr.SalesMan,tstr);
   IVr.SalesGroup = tstr;

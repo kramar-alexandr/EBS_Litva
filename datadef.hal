@@ -617,7 +617,7 @@ begin
   EndBlock;
   
   RecordAddBegin(LocationVc,"LocationVc_Custom");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 19:33:13
-  ArrayField(Warning,M4Str,255,0); 
+  	RecordField(Warning,M4Str,255,0); 
   EndRecordAdd;
  	
 return;

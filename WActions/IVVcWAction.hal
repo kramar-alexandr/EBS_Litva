@@ -183,6 +183,29 @@ begin
   return;
 end;
 
+function Boolean IVDClassLocationEFAfter(Integer wn,Integer rownr,Integer changed)// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 09:42:08
+begin  
+  record IVVc IVr;
+  record LocationVc Locr;
+  
+  if (changed!=0) then begin
+//    DeselectWindow(wn,false);//what for ? 
+    GetWindowRecord(wn,IVr);
+    if(nonblank(IVr.Location))then begin
+    	Locr.Code = IVr.Location;
+    	if(readfirstmain(Locr,1,true))then begin
+    		if(nonblank(Locr.Warning))then begin
+					messagebox(0,Locr.Warning);
+    		end;
+    	end;
+    end;
+    //IVVc_PasteItem(IVr,rownr,wn);
+    //DisplayIVItem(IVr,rownr);
+  end;
+  IVDClassLocationEFAfter = true;
+  return;
+end;
+
 global
 function Boolean IVDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
 BEGIN
@@ -197,6 +220,8 @@ BEGIN
   	  res = IVDClassPriceExclVATEFAfter(wn,fn,rownr,changed);
     case "ArtCode":
       res = IVDClassArtCodeEFAfter(wn,rownr,changed);
+    case "Location":// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 09:41:29
+      res = IVDClassLocationEFAfter(wn,rownr,changed);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 09:41:32
   end;
   IVDClassAfterEditField = res;
 return;
