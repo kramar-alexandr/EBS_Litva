@@ -1696,7 +1696,7 @@ begin
   EditField(80,v+20,100,"Parduotuv˜",Normal,Loc,false,LocationSClass);
  // EditField(80,v+40,100,"Parduotuv˜",Normal,Name,false,0);
   EnterSkip(Math);
-  MatrixBegin(h=10,v+=135,-25,-10,-,99); 
+  MatrixBegin(h=10,v+=135,-25,-10,-,300); // Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 December 2017 17:30:49
   MatCol(1,24,"Prek˜",0,ArtCode,false,INSClass);
   MatCol(1,94,"Apraäymas",0,Description,false,0);
   MatCol(1,200,"Kiekis",0,Qty,false,0);
