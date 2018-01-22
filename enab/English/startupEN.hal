@@ -6,5 +6,9 @@ begin
   Maintenance("Create BurtiEnabler.bkey file",CreateEnablerVClass,CreateEnablerMn,modTC);
   Maintenance("Create BurtiEnabler.bkey file",CreateEnablerVClass,CreateEnablerMn,modSY);
   
+  
+  SString(1000103,"Can`t be the same location"); // Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 22 January 2018 10:11:18
+
+  
   return;
 end;
