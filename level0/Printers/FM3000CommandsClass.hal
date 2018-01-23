@@ -496,7 +496,7 @@ begin
       case kSerialPortDeviceModelFiscPrinterFM32DLL:      
         FM32PrintDailyReportdll(LSPDr);
       case kSerialPortDeviceModelFiscPrinterFB05:// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:19:54
-      	FB05DailyReport(LSPDr);
+      	FB05MonthlyReport(LSPDr);
     end;
   end else begin// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:24:22
   	// Edit Start ---------------------------------------------- Edit Start
@@ -527,27 +527,11 @@ begin
     if (blank(LSPDr.Port)) then begin
 			LSPDr.Port = LMb.DefPrinter;
 		end;
-		switch (LSPDr.Printer) begin
-      case kSerialPortDeviceModelFiscPrinterPOSNET:
-        POSNETProtocol_DailyReport(LSPDr,CurrentDate);
-      case kSerialPortDeviceModelFiscPrinterPOSNETwVATNr:
-        POSNETProtocol_DailyReport(LSPDr,CurrentDate);
-      case kSerialPortDeviceModelFiscPrinterPOSNETTCPIP:
-        POSNETProtocol_DailyReport_TCP(LSPDr,CurrentDate);
-      case kSerialPortDeviceModelFiscPrinterBematechMP2100:
-        BematechMP2100XReport(LSPDr);
-      case kSerialPortDeviceModelVirtualFiscPrinterCHDFMPOS:
-        CHDFMPOSMonthlyReport(LSPDr);
-      case kSerialPortDeviceModelFiscPrinterFB15:      
-        FB15PeriodicReport(RepSpec,LSPDr);
-      case kSerialPortDeviceModelFiscPrinterFB15DLL:      
-        FB15PeriodicReportdll(RepSpec,LSPDr);
-      case kSerialPortDeviceModelFiscPrinterFM32DLL:      
-        FM32PrintDailyReportdll(LSPDr);
-      case kSerialPortDeviceModelFiscPrinterFB05:// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:19:54
-      	FB05DailyReport(LSPDr);
-    end;
     
+    switch (LSPDr.Printer) begin
+      case kSerialPortDeviceModelFiscPrinterFB05:// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:19:54
+      	FB05MonthlyReport(LSPDr);
+    end;
 	// Edit End ---------------------------------------------- Edit End
 	
   end;
@@ -559,6 +543,9 @@ procedure TouchScreenZReading()
 begin
   record LocalMachineBlock LMb;
   record LSerialPortDeviceVc LSPDr;
+  record CashPrintBlock CPb;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:24:17
+	record MachineCashVc MCr;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:25:22
+
 
   BlockLoad(LMb);  
   if (FindLocalSerialPortDevice(kSerialPortDeviceClassFiscalPrinter,-1,LMb.LocalMachineCode,LSPDr)) then begin  
@@ -573,7 +560,44 @@ begin
         FB15DailyReportdll(LSPDr);
       case kSerialPortDeviceModelFiscPrinterFM32DLL:
         FM32DailyReportdll(LSPDr);
+      case kSerialPortDeviceModelFiscPrinterFB05:
+        FB05DailyReport(LSPDr);
     end;
+  end else begin
+  	// Edit Start ---------------------------------------------- Edit Start
+	//Tuesday, 23 January 2018 12:24:30
+	
+  	BlockLoad(CPb);  
+    switch (LSPDr.Printer) begin
+      case 15:
+        LSPDr.BaudRate = 9600; LSPDr.Parity = -1; LSPDr.ByteSize = 8; LSPDr.StopBits = 1; LSPDr.FlowControl = kFlowControlDefault;
+      case 16:
+        LSPDr.BaudRate = 9600; LSPDr.Parity = -1; LSPDr.ByteSize = 8; LSPDr.StopBits = 0; LSPDr.FlowControl = kFlowControlDefault;
+      case 17:
+        LSPDr.BaudRate = 9600; LSPDr.Parity = -1; LSPDr.ByteSize = 8; LSPDr.StopBits = 0; LSPDr.FlowControl = kFlowControlDefault;
+      case 19:
+        LSPDr.BaudRate = 9600; LSPDr.Parity = -1; LSPDr.ByteSize = 8; LSPDr.StopBits = 0; LSPDr.FlowControl = kFlowControlDefault;
+    end;
+    MCr.Code = LMb.LocalMachineCode;
+    if (ReadFirstMain(MCr,1,true)) then begin
+      LSPDr.Printer = MCr.FiscalPrinter;
+      LSPDr.Port = MCr.CommPort;
+    end;  
+    if (LSPDr.Printer==0) then begin
+      LSPDr.Printer = CPb.FiscalPrinter;
+      if (blank(LSPDr.Port)) then begin
+        LSPDr.Port = CPb.CommPort;
+      end;
+    end;
+    if (blank(LSPDr.Port)) then begin
+			LSPDr.Port = LMb.DefPrinter;
+		end;
+    
+    switch (LSPDr.Printer) begin
+      case kSerialPortDeviceModelFiscPrinterFB05:// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 23 January 2018 12:19:54
+      	FB05DailyReport(LSPDr);
+    end;
+	// Edit End ---------------------------------------------- Edit End
   end;
   return;
 end;
