@@ -13,6 +13,7 @@ external procedure HTSaleMan(string, var string);
 external procedure HTDetailLevel(Integer, var string);
 external procedure FindSalesExVat(record TaxMatrixVc,string, val,Integer,Integer,var val);
 external procedure HT2Per(Date,Date,var string);
+external function Boolean SetInSet2(string,string);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 30 January 2018 10:29:55
 
 procedure RepIVCashGP(record IVCashVc IVCashp, var val totquanp, var val totcsump,record RcVc RepSpec)
 begin
@@ -282,7 +283,7 @@ begin
                     end;
                   end;
                   if (nonblank(RepSpec.f6)) then begin
-                    if (SetInSet(RepSpec.f6,INr.DispGroups)==false) then begin
+                    if (SetInSet2(RepSpec.f6,INr.DispGroups)==false) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 30 January 2018 10:29:23
                       skipitem = true;
                       wholeinv = false;
                     end;
@@ -346,7 +347,7 @@ begin
               wholeinv = false;
             end;
             if (nonblank(RepSpec.f6)) then begin
-              if (SetInSet(RepSpec.f6,INr.DispGroups)==false) then begin
+              if (SetInSet2(RepSpec.f6,INr.DispGroups)==false) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 30 January 2018 10:29:30
                 skipfr = true;
                 wholeinv = false;
               end;
