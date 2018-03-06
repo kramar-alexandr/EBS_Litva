@@ -575,6 +575,7 @@ begin
 	
 	RecordAddBegin(IVCashVc,"IVCashVc_Custom");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 19:33:13
   ArrayField(RMINumber,M4Str,25,0); 
+  ArrayField(PriceExclVAT,M423Val,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 05 03 2018 y. 19:32:45
   EndRecordAdd;
   
   BlockBegin(CashierDefBlock,-,"CashierDefBlock3");

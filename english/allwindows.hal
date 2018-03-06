@@ -549,6 +549,7 @@ begin
   end else begin
     MatCol(t,150,"Qty.",0,Quant,true,0);
   end;
+  MatCol(t,140,"Price ex VAT",0,Price,true,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 03 2018 y. 07:47:57
   MatCol(t,190,"Price",0,Price,true,0);
   MatCol(t,250,"Description",0,Spec,false,0);
   MatCol(t,-195,"Ser. No",0,SerialNr,false,SerialNrSClass);
@@ -651,7 +652,8 @@ begin
   if (UserCanAction("ShowSerialNronPOSInvoices",false)) then begin
     MatCol(t,-270,"Serial No",0,SerialNr,false,SerialNrSClass);
   end;
-  MatCol(t,-175,"Unit Price",0,Price,true,0);
+  MatCol(t,140,"Price ex VAT",0,Price,true,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 03 2018 y. о 07:52:28
+  MatCol(t,-175,"Price",0,Price,true,0);
   MatCol(t,-105,"%",0,vRebate,true,0);
   MatCol(t,-70,"Sum",0,Sum,true,0);
   if (UseTaxTemplatesforTaxCalc) then begin

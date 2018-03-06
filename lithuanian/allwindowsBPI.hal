@@ -551,6 +551,7 @@ begin
   end else begin
     MatCol(t,150,"Kiekis.",0,Quant,true,0);
   end;
+  MatCol(t,140,"Kaina be PVM",0,PriceExclVAT,true,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 03 2018 y 07:49:30
   MatCol(t,190,"Kaina",0,Price,true,0);
   MatCol(t,250,"Apraäymas",0,Spec,false,0);
   MatCol(t,-195,"Ser. Nr",0,SerialNr,false,SerialNrSClass);
@@ -653,6 +654,7 @@ begin
   if (UserCanAction("ShowSerialNronPOSInvoices",false)) then begin
     MatCol(t,-270,"Ser.nr.",0,SerialNr,false,SerialNrSClass);
   end;
+  MatCol(t,-250,"Kaina ne PVM",0,PriceExclVAT,true,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 03 2018 y.  07:53:08
   MatCol(t,-175,"Vnt. kn.",0,Price,true,0);
   MatCol(t,-105,"%",0,vRebate,true,0);
   MatCol(t,-70,"Suma",0,Sum,true,0);

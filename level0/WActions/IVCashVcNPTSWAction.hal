@@ -293,7 +293,7 @@ LkInvoiceRowTypeNormal4:;
           	pvat = ValToString(pvatval,M4Val,ThousandSeparator,DecimalSeparator,0);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 00:11:55
 
             
-            AddStringListRowWVAT(wn,width,LMb.POSFontSize,IVCashrw.ArtCode,IVCashrw.Spec,ValToString(IVCashrw.Quant,M4Qty,ThousandSeparator,DecimalSeparator,0),pvat,ValToString(IVCashrw.Sum,M4Val,ThousandSeparator,DecimalSeparator,0),IVCashrw.vRebate,i,IVCashrw.VATCode,IVCashrw.Location,pwvat);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 00:03:16
+            AddStringListRowWVAT(wn,width,LMb.POSFontSize,IVCashrw.ArtCode,IVCashrw.Spec,ValToString(IVCashrw.Quant,M4Qty,ThousandSeparator,DecimalSeparator,0),pvat,ValToString(IVCashrw.Sum,M4Val,ThousandSeparator,DecimalSeparator,0),IVCashrw.vRebate,i,IVCashrw.VATCode,IVCashrw.Location,IVCashrw.PriceExclVAT);// Edit ************************** BPI Ukraine - KramarAlexandr - четвер, 16 листопада 2017 р. о 00:03:16
             line = line + 1;
             if (nonblank(IVCashrw.SerialNr)) then begin
               AddStringListRow2(wn,USetStr(24178) & ":  " & IVCashrw.SerialNr,"");

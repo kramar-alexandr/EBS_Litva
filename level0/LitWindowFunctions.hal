@@ -1171,7 +1171,7 @@ begin
     DataListColumn(1,6,210,AdjLeft,"artcode","Kodas",M4Code);// Edit ************************** BPI Ukraine - KramarAlexandr - t, 16 nov 2017 00:29:12
     if (HasJewelleryInterface) then begin
       if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
-        DataListColumn(1,91,-500,AdjLeft,"spec","Apraäymas",M4Str);
+        DataListColumn(1,91,-500,AdjLeft,"spec","Aprasymas",M4Str);
         DataListColumn(1,-495,-460,AdjRight,"vatcode","PVM kd.",M4Str);
         DataListColumn(1,-455,-380,AdjRight,"location","Patalpa",M4Str);
       end else begin
@@ -1183,7 +1183,7 @@ begin
       DataListColumn(1,-205,-150,AdjRight,"rebate","Nuol.",M4Val);
       DataListColumn(1,-145,-21,AdjRight,"rowsum","Suma",M4Val);
     end else begin
-      DataListColumn(1,211,-460,AdjLeft,"spec","Apraäymas",M4Str);// Edit ************************** BPI Ukraine - KramarAlexandr - t, 16 nov 2017 00:31:04
+      DataListColumn(1,211,-460,AdjLeft,"spec","Aprasymas",M4Str);// Edit ************************** BPI Ukraine - KramarAlexandr - t, 16 nov 2017 00:31:04
       DataListColumn(1,-455,-420,AdjRight,"qty","Kiekis",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - t, 16 nov 2017 00:31:06
 			DataListColumn(1,-415,-315,AdjRight,"pricewvat","Price w-out VAT",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - w, 15 nov 2017 23:31:43
       DataListColumn(1,-310,-210,AdjRight,"price","Kaina",M4Val);

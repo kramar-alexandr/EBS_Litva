@@ -78,6 +78,8 @@ external procedure PCEftpos_Transaction_Request(Integer,val,val,Boolean,string,s
 external procedure Bambora_Transaction_Request(Integer,val,val,Boolean,string,string,string,string,val,string,val);
 external procedure Bambora_Cancel_Request(Integer);
 remote procedure IVVc_PasteSalesMan(var record IVVc,string);
+external function val FindVAT(string,val,Integer,Integer);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 03 2018 y. 07:58:51
+
 
 global 
 procedure SelectHWStoreWClass()
@@ -2094,6 +2096,13 @@ begin
         MatRowGet(IVCashr,rownr,IVCashrw);
 //        IVCashrw.Quant = RepSpec.vals0;
         IVCashrw.Price = RepSpec.vals1;
+        
+				if (IVCashr.InclVAT == 0) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 03 2018 y. 08:54:25
+					IVCashrw.PriceExclVAT = IVCashrw.Price;
+				end else begin
+					IVCashrw.PriceExclVAT = IVCashrw.Price - FindVAT(IVCashrw.VATCode,IVCashrw.Price,IVCashr.InclVAT,IVCashr.NoTAXonVAT);
+				end;
+        
         IVCashrw.vRebate = RepSpec.vals2;
         IVCashrw.Sum = RepSpec.vals3;
         IVCashrw.VATCode = RepSpec.f2;
