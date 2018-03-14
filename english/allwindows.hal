@@ -767,7 +767,7 @@ begin
   if (HasLocalization("SVN")) then begin
     SpecialMenu("Fiscalize Sales Book Invoice",' ',26,"SVNFiscalizeSalesBookIVCashDsm");
   end;
-  
+  SpecialMenu("Pin Pad VOID",'',27,"PinPadVoidIVCashDsm");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 14 March 2018 14:06:57
   SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);
   SpecialMenu("Open Session",' ',8,"OpenPOSSessionsm");
   SpecialMenu("Close Session",' ',9,"ClosePOSSessionsm");
@@ -777,6 +777,7 @@ begin
   SpecialMenu("Late Delivery Sales Order",' ',5,"IVCashToLateDelivORsm");
   SpecialMenu("Transfer to Invoice",' ',3,"IVCashToIVDsm");
   SpecialMenu("Transfer to Sales Order",' ',1,"IVCashToORsm");
+ 
   end;
   EndWindow;
 end;

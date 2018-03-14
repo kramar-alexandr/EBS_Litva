@@ -769,6 +769,7 @@ begin
   if (HasLocalization("SVN")) then begin
     SpecialMenu("Fiskalizuoti pard. knygos sˆsk.",' ',26,"SVNFiscalizeSalesBookIVCashDsm");
   end;
+  SpecialMenu("Pin Pad VOID",'',27,"PinPadVoidIVCashDsm");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 14 March 2018 14:06:57
 
   SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);
   SpecialMenu("Atidaryti sesijˆ",' ',8,"OpenPOSSessionsm");

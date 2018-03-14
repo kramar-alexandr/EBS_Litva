@@ -857,6 +857,133 @@ PinPadBegin = res;
 return;
 end;
 
+updating function Integer PinPadCashBegin(record IVCashVc IVCashr,boolean fallback,var boolean printf,var string response)
+begin
+	integer res;
+	integer res1,res2,rwcnt,i,nwn,wn;
+	string 255 CtrlSeq,CtrlSeq2;
+	record LocalMachineBlock LMb;
+	row IVVc IVCashrw;
+	val sum;
+	string 255 response1;
+	array string 255 ResponseArea;
+	record RcVc RepSpec;
+	boolean testf;
+	array string 255 text2;
+	record IVVc oldIVCashr;
+	record NotepadVc Noter;
+	record PinPadCntVc PinPadCntr,oldPinPadCntr;
+	string 100 text;
+	boolean noresponse;
+	
+	blockload(LMb);
+	res = 0;
+	PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+	if ReadFirstMain(PinPadCntr,1,true) then begin 
+		recordcopy(oldPinPadCntr,PinPadCntr);
+		PinPadCntr.Counter = PinPadCntr.Counter + 1;
+		PinPadCntr.ToBeVoided = PinPadCntr.Counter;
+		recordupdate(oldPinPadCntr,PinPadCntr,false);
+	end;
+	wn = CurWindow;
+	rwcnt = MatRowCnt(IVCashr);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(IVCashr,i,IVCashrw);
+		if IVCashrw.stp == kInvoiceRowTypeCreditCardPayment then begin
+			if (IVCashrw.Spec =="LIZINGAS" or IVCashrw.Spec == "Leasing") then begin
+			end else begin
+				sum = sum + IVCashrw.Sum;
+			end;
+		end;
+	end;
+	if fallback == false then begin
+	  CtrlSeq = "HPUR10.01" & chr(ST05_SCM);
+	  CtrlSeq = CtrlSeq & AddZero(PinPadCntr.Counter,10) & chr(ST05_SCM);
+	  CtrlSeq = CtrlSeq & AddZero(ValToString(sum,M4Val,"","",0),12) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	  CtrlSeq2 = CtrlSeq;
+	  CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC(CtrlSeq2))); 
+	end else begin
+	  CtrlSeq = "QPUR10.01" & chr(ST05_SCM); // TESTE magnetic stripe
+	  CtrlSeq = CtrlSeq & AddZero(PinPadCntr.Counter,10) & chr(ST05_SCM);
+	  CtrlSeq2 = CtrlSeq;
+	  CtrlSeq = CtrlSeq & AddZero(ValToString(sum,M4Val,"","",0),12) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(HexToInt("0x82")) & chr(HexToInt("0x80")) & chr(HexToInt("0x80")) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	  CtrlSeq2 = CtrlSeq2 & AddZero(ValToString(sum,M4Val,"","",0),12) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & ConvertStringToCodePage("CP1257",chr(80))& ConvertStringToCodePage("CP1257",chr(80)) & ConvertStringToCodePage("CP1257",chr(80)) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	  CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC2(CtrlSeq2))); 
+	end;
+  CtrlSeq = chr(ST05_SOC) & chr(ST05_SC0) & CtrlSeq; 
+  res = ST05WriteAndGetResponse(CtrlSeq,ST05_DELAY10,response,ResponseArea,noresponse);
+  if noresponse == true then begin
+    messagebox(18145,"");
+    PinPadClose;
+    printf = false;
+    goto skipf;
+  end;
+  res = ST05WriteAndGetResponse(chr(ST05_SC6),ST05_DELAY,response,ResponseArea,noresponse);
+  if noresponse == true then begin
+    messagebox(18145,"");
+    PinPadClose;
+    printf = false;
+    goto skipf;
+  end;
+  
+  response = Left(response,8);
+  response = Right(response,2);
+
+  switch(response) begin
+  	case "14": response = CardOperations(ResponseArea,ST05_LONGDELAY);
+  end;
+  if response == "SKIP" then begin
+  	printf = false;
+    goto skipf;
+  end else begin
+    printf = true;
+  end;
+  response1 = Left(response,8);
+  response1 = Right(response1,2);
+  switch(response1) begin
+  	case "16": 
+  	  res = ST05Write2(chr(ST05_SC6),ST05_DELAY);
+  	  res = ST05Write2(chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "PUR17." & chr(ST05_ECM) & chr(HexToInt("7A")),ST05_DELAY);
+  	  response = Right(response,len(response)-9);
+      response = Left(response,3);
+      if response == "017" then begin
+      	res = PinPadCashBegin(IVCashr,true,printf,response);
+      	//goto skipf;
+      end else begin
+        PinPadClose;
+  	    GetBreakReqError(response,text);
+  		  MessageBox(1,text);
+      end;
+	    recordcopy(oldPinPadCntr,PinPadCntr);
+	    PinPadCntr.ToBeVoided = 0;
+	    recordupdate(oldPinPadCntr,PinPadCntr,false);
+	    printf = false;
+  	case "12": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "PUR13." & chr(ST05_ECM) & chr(HexToInt("7E")),ST05_DELAY);
+  	  PinPadClose;
+  	  testf = PrintPinPadReceipt(ResponseArea,"PARD",text2);
+			RecordNew(Noter);  
+			for (i=0;i<24+1;i=i+1) begin
+				LineTextPut(Noter,i,text2[i]);    
+			end;  
+			if (RecordStore(Noter,false)) then begin
+				//CreateRecordLink(Noter,CurrentCompany,IVCashr,CurrentCompany);  
+				CreateRecordLink(IVCashr,CurrentCompany,Noter,CurrentCompany);
+			end;
+	    recordcopy(oldPinPadCntr,PinPadCntr);
+	    PinPadCntr.ToBeVoided = 0;
+	    recordupdate(oldPinPadCntr,PinPadCntr,false);
+  end;
+  
+  if ResponseArea[19] == "Y" then begin
+    printf = true;
+  end else begin
+    printf = false;
+  end;
+  skipf:;
+PinPadCashBegin = res;
+return;
+end;
+
 function string 255 CardOperationsReturn(var array string ResponseArea,LongInt delay)
 begin
  integer res;
@@ -1035,6 +1162,130 @@ PinPadReturn = res;
 return;
 end;
 
+updating function Integer PinPadCashReturn(var record LSerialPortDeviceVc LSPDr,record IVCashVc IVCashr,boolean fallback,var boolean printf,var string response)
+begin
+	integer res;
+	integer res1,res2,rwcnt,i,nwn,wn;
+	string 255 CtrlSeq,CtrlSeq2;
+	record LocalMachineBlock LMb;
+	row IVCashVc IVCashrw;
+	val sum;
+	string 255 response1;
+	array string 255 ResponseArea;
+	record RcVc RepSpec;
+	boolean testf;
+	array string 255 text2;
+	record IVCashVc oldIVCashr;
+	string 255 text;
+	record NotepadVc Noter;
+	record PinPadCntVc PinPadCntr,oldPinPadCntr;
+	boolean noresponse;
+	
+	blockload(LMb);
+	res = 0;
+	PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+	if ReadFirstMain(PinPadCntr,1,true) then begin 
+		recordcopy(oldPinPadCntr,PinPadCntr);
+		PinPadCntr.Counter = PinPadCntr.Counter + 1;
+		PinPadCntr.ToBeVoided = PinPadCntr.Counter;
+		recordupdate(oldPinPadCntr,PinPadCntr,false);
+	end;
+	wn = CurWindow;
+	rwcnt = MatRowCnt(IVCashr);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(IVCashr,i,IVCashrw);
+		if IVCashrw.stp == kInvoiceRowTypeCreditCardPayment then begin
+			if (IVCashrw.Spec == "LIZINGAS" or IVCashrw.Spec == "Leasing") then begin
+			end else begin
+				sum = sum + IVCashrw.Sum;
+			end;
+		end;
+	end;
+	if fallback == false then begin
+	  CtrlSeq = "HREF10.01" & chr(ST05_SCM);
+	  CtrlSeq = CtrlSeq & AddZero(PinPadCntr.Counter,10) & chr(ST05_SCM);
+	  CtrlSeq = CtrlSeq & AddZero(ValToString(sum,M4Val,"","",0),12) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	  CtrlSeq2 = CtrlSeq;
+	  CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC(CtrlSeq2))); 
+	end else begin
+	  CtrlSeq = "QREF10.01" & chr(ST05_SCM);
+	  CtrlSeq = CtrlSeq & AddZero(PinPadCntr.Counter,10) & chr(ST05_SCM);
+	  CtrlSeq2 = CtrlSeq;
+	  CtrlSeq = CtrlSeq & AddZero(ValToString(sum,M4Val,"","",0),12) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(HexToInt("0x82")) & chr(HexToInt("0x80")) & chr(HexToInt("0x80")) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	  CtrlSeq2 = CtrlSeq2 & AddZero(ValToString(sum,M4Val,"","",0),12) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & ConvertStringToCodePage("CP1257",chr(80))& ConvertStringToCodePage("CP1257",chr(80)) & ConvertStringToCodePage("CP1257",chr(80)) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	  CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC2(CtrlSeq2))); 
+	end;
+  CtrlSeq = chr(ST05_SOC) & chr(ST05_SC0) & CtrlSeq; 
+  res = ST05WriteAndGetResponse(CtrlSeq,ST05_DELAY10,response,ResponseArea,noresponse);
+  if noresponse == true then begin
+    messagebox(18145,"");
+    PinPadClose;
+    printf = false;
+    goto skipf;
+  end;
+  res = ST05WriteAndGetResponse(chr(ST05_SC6),ST05_DELAY,response,ResponseArea,noresponse);
+  if noresponse == true then begin
+    messagebox(18145,"");
+    PinPadClose;
+    printf = false;
+    goto skipf;
+  end;
+  response = Left(response,8);
+  response = Right(response,2);
+
+  switch(response) begin
+  	case "14": response = CardOperationsReturn(ResponseArea,ST05_LONGDELAY);
+  end;
+  if response == "SKIP" then begin
+  	printf = false;
+    goto skipf;
+  end else begin
+    printf = true;
+  end;
+  response1 = Left(response,8);
+  response1 = Right(response1,2);
+  switch(response1) begin
+  	case "16": 
+  	  res = ST05Write2(chr(ST05_SC6),ST05_DELAY);
+  	  res = ST05Write2(chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "REF17." & chr(ST05_ECM) & chr(HexToInt("7C")),1);
+  	  response = Right(response,len(response)-9);
+      response = Left(response,3);
+      if response == "017" then begin
+      	res = PinPadCashReturn(LSPDr,IVCashr,true,printf,response);
+      end else begin
+        PinPadClose;
+  	    GetBreakReqError(response,text);
+  		  MessageBox(1,text);
+  		  printf = false;
+      end;
+	    recordcopy(oldPinPadCntr,PinPadCntr);
+	    PinPadCntr.ToBeVoided = 0;
+	    recordupdate(oldPinPadCntr,PinPadCntr,false);
+  	case "12": res = ST05Write2(chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "REF13." & chr(ST05_ECM) & chr(HexToInt("78")),ST05_DELAY);
+  	  PinPadClose;
+  	  testf = PrintPinPadReceipt(ResponseArea,"REF",text2);
+			RecordNew(Noter);  
+			for (i=0;i<24+1;i=i+1) begin
+				LineTextPut(Noter,i,text2[i]);    
+			end;  
+			if (RecordStore(Noter,false)) then begin
+				//CreateRecordLink(Noter,CurrentCompany,IVCashr,CurrentCompany);  
+				CreateRecordLink(IVCashr,CurrentCompany,Noter,CurrentCompany);
+			end;
+	    recordcopy(oldPinPadCntr,PinPadCntr);
+	    PinPadCntr.ToBeVoided = 0;
+	    recordupdate(oldPinPadCntr,PinPadCntr,false);
+  end;
+  if ResponseArea[19] == "Y" then begin
+    printf = true;
+  end else begin
+    printf = false;
+  end;
+  skipf:;
+PinPadCashReturn = res;
+return;
+end;
+
 global
 updating function boolean PinPad(var record IVVc IVr,var string response)
 begin
@@ -1069,6 +1320,43 @@ begin
     end;
   end;
   PinPad = printf;
+  return;
+end;
+
+global
+updating function boolean PinPadCash(var record IVCashVc IVCashr,var string response)
+begin
+  record IVVc lIVr;
+  record IVVc oldIVr;
+  Integer noErr,res;
+  vector val vatrates;
+  val v;
+  area a;
+  Boolean sent;
+  string 20 ReceiptNo;
+  record CashPrintBlock CPb;
+  record LocalMachineBlock LMb;
+  record MachineCashVc MCr;
+  record LSerialPortDeviceVc LSPDr;
+  boolean printf;
+
+  BlockLoad(LMb);  
+  if (FindLocalSerialPortDevice(kSerialPortDeviceClassCreditCardTerminal,-1,LMb.LocalMachineCode,LSPDr)==false) then begin  
+  end;
+  
+
+  noErr = 0;
+  res = PinPadOpenPort(LSPDr);
+  printf = false;
+  if (res==noErr) then begin    
+    noErr = 0;
+    if IVCashr.InvType == kInvoiceTypeCredit then begin
+      res = PinPadCashReturn(LSPDr,IVCashr,false,printf,response);
+    end else begin
+      res = PinPadCashBegin(IVCashr,false,printf,response);
+    end;
+  end;
+  PinPadCash = printf;
   return;
 end;
 
@@ -1213,6 +1501,152 @@ begin
   skipf:;
   skipf2:;
   PinPadVoid = testf2;
+return;
+end;
+
+
+global
+updating function boolean PinPadVoidCash(record IVCashVc IVCashr)
+begin
+  record IVCashVc lIVCashr;
+  record IVCashVc oldIVCashr;
+  Integer noErr,res;
+  vector val vatrates;
+  val v;
+  area a;
+  Boolean sent;
+  string 20 ReceiptNo;
+  record CashPrintBlock CPb;
+  record LocalMachineBlock LMb;
+  record MachineCashVc MCr;
+  record LSerialPortDeviceVc LSPDr;
+  string 255 CtrlSeq;
+  integer wn,rwcnt,i;
+  row IVCashVc IVCashrw;
+  val sum;
+	string 255 response,response1,text;
+	array string 255 ResponseArea;
+	boolean testf;
+	array string 255 text2;
+  record NotepadVc Noter;
+  record PinPadCntVc PinPadCntr,oldPinPadCntr;
+  boolean testf2,noresponse;
+  
+	res = 0;
+	rwcnt = MatRowCnt(IVCashr);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(IVCashr,i,IVCashrw);
+		if IVCashrw.stp == kInvoiceRowTypeCreditCardPayment then begin
+			if(IVCashrw.Spec=="LIZINGAS" or  IVCashrw.Spec=="Leasing")then begin
+			
+			end else begin
+				sum = sum + IVCashrw.Sum;
+			end;
+		end;
+	end;
+
+  BlockLoad(LMb);  
+  if (FindLocalSerialPortDevice(kSerialPortDeviceClassCreditCardTerminal,-1,LMb.LocalMachineCode,LSPDr)==false) then begin  
+  end;
+  
+  noErr = 0;
+  res = PinPadOpenPort(LSPDr);
+  
+	CtrlSeq = "6VOI10.01" & chr(ST05_SCM);
+	CtrlSeq = CtrlSeq & AddZero(IVCashr.BankCode,10) & chr(ST05_SCM);
+	CtrlSeq = CtrlSeq & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+	CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC(CtrlSeq))); 
+  CtrlSeq = chr(ST05_SOC) & chr(ST05_SC0) & CtrlSeq; 
+  res = ST05WriteAndGetResponse(CtrlSeq,ST05_DELAY10,response,ResponseArea,noresponse);
+  if noresponse == true then begin
+    messagebox(18145,"");
+    PinPadClose;
+    testf2 = false;
+    goto skipfcash;
+  end;
+  if res == 0 then begin
+    res = ST05WriteAndGetResponse(chr(ST05_SC6),ST05_DELAY,response,ResponseArea,noresponse);
+		if noresponse == true then begin
+			messagebox(18145,"");
+			PinPadClose;
+			testf2 = false;
+			goto skipfcash;
+		end;
+  end else begin
+
+  end;
+  response1 = Right(response,len(response)-9);
+  response1 = Left(response1,3);
+  response = Left(response,8);
+  response = Right(response,2);
+
+  switch(response) begin
+  	case "14": res = ST05WriteAndGetResponse(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI15." & chr(ST05_ECM) & chr(HexToInt("7F")),ST05_DELAY,response,ResponseArea,noresponse);
+  	case "16": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI17." & chr(ST05_ECM) & chr(HexToInt("7D")),ST05_DELAY);
+  	  PinPadClose;
+			PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+			if ReadFirstMain(PinPadCntr,1,true) then begin end;
+			RecordCopy(oldPinPadCntr,PinPadCntr);
+			PinPadCntr.ToBeVoided = 0;
+			RecordUpdate(oldPinPadCntr,PinPadCntr,false);
+  	  GetBreakReqError(response1,text);
+  	  MessageBox(1,text);
+  	  goto skipfcash;
+  end;   
+  if noresponse == true then begin
+    messagebox(18145,"");
+    PinPadClose;
+    testf2 = false;
+    goto skipfcash;
+  end;
+  response = Left(response,8);
+  response = Right(response,2);
+  switch(response) begin
+  	case "16": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI17." & chr(ST05_ECM) & chr(HexToInt("7D")),ST05_DELAY);
+  	PinPadClose;
+		PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+		if ReadFirstMain(PinPadCntr,1,true) then begin end;
+		RecordCopy(oldPinPadCntr,PinPadCntr);
+		PinPadCntr.ToBeVoided = 0;
+		RecordUpdate(oldPinPadCntr,PinPadCntr,false);
+  	GetBreakReqError(response1,text);
+  	MessageBox(1,text);
+  	case "12": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI13." & chr(ST05_ECM) & chr(HexToInt("79")),ST05_DELAY);
+  	PinPadClose;
+  	testf = PrintPinPadReceipt(ResponseArea,"VOID",text2);
+		RecordNew(Noter);  
+		for (i=0;i<24+1;i=i+1) begin
+			LineTextPut(Noter,i,text2[i]);    
+		end;  
+		if (RecordStore(Noter,false)) then begin
+			//CreateRecordLink(Noter,CurrentCompany,IVr,CurrentCompany);  
+			CreateRecordLink(IVCashr,CurrentCompany,Noter,CurrentCompany);
+		end;
+		testf2 = false;
+		if ResponseArea[19] == "Y" then begin
+			//RecordCopy(oldIVr,IVr);
+			//IVr.BankCode = "";
+			//RecordUpdate(oldIVr,IVr,false);
+			testf2 = true;
+			PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+			if ReadFirstMain(PinPadCntr,1,true) then begin end;
+			RecordCopy(oldPinPadCntr,PinPadCntr);
+			PinPadCntr.ToBeVoided = 0;
+			RecordUpdate(oldPinPadCntr,PinPadCntr,false);
+		end else begin
+		  if ResponseArea[19] == "N" then begin
+			  PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+			  if ReadFirstMain(PinPadCntr,1,true) then begin end;
+			  RecordCopy(oldPinPadCntr,PinPadCntr);
+			  PinPadCntr.ToBeVoided = 0;
+			  RecordUpdate(oldPinPadCntr,PinPadCntr,false);
+			end;
+		end;
+  end;
+ 
+  skipfcash:;
+  skipfcash2:;
+  PinPadVoidCash = testf2;
 return;
 end;
 

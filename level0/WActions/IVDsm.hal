@@ -85,6 +85,8 @@ external updating function boolean PinPad(var record IVVc,var string);
 external updating function boolean PinPadVoid(record IVVc);
 external updating procedure PrintFB05Receipt(var record IVVc,record LSerialPortDeviceVc);
 external updating function boolean PinPadVoid2(longint);
+external updating function boolean PinPadVoidCash(record IVCashVc);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 14 March 2018 14:23:31
+
 //END-CUST PST 2015-September-29
 
 global
@@ -2226,6 +2228,38 @@ return;
 end;
 //END-CUST PST 2015-September-29
 
+// Edit Start ---------------------------------------------- Edit Start
+	//Wednesday, 14 March 2018 14:07:31
+	
+global
+updating procedure PinPadVoidIVCashDsm()
+begin
+  Integer wn,wnst,nwn;
+  record IVCashVc IVCashr,prevIVCashr,oldIVCashr;
+  
+  wn = CurWindow;
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,IVCashr);
+  if windowstate(wn) == 0 then begin
+    if  nonblank(IVCashr.BankCode) or IVCashr.InvDate != CurrentDate then begin
+  	  if PinPadVoidCash(IVCashr) == true  then begin
+  	  	CloseWindow(wn);
+				nwn = OpenWindow("IVCashDClass",1,0,"","",IVCashr);
+  	  end else begin
+  	  	MessageBox(1,"    ATSISAKYMAS NEPATVIRTINTAS!!!!");
+  	  end;
+  	end else begin
+  	  MessageBox(1,"   Operacija negalima");
+  	end;
+	end else begin
+	  MessageBox(18044,"");
+	end;
+return;
+end;
+
+
+	// Edit End ---------------------------------------------- Edit End
+	
 //START-CUST PST 2015-September-29
 global
 updating procedure PinPadVoidIVDsm()
@@ -2272,6 +2306,27 @@ begin
 CheckPinPad = res;
 return;
 end;
+
+global function boolean CheckPinPadCash(record IVCashVc IVCashr)// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 16:50:12
+begin
+	boolean res;
+	integer i,rwcnt;
+	row IVCashVc IVCashrw;
+	
+	res =  false;
+	rwcnt = MatRowCnt(IVCashr);
+	for(i=0;i<rwcnt;i=i+1)begin
+		MatRowGet(IVCashr,i,IVCashrw);
+		if IVCashrw.stp == kInvoiceRowTypeCreditCardPayment and (IVCashrw.Spec!="LIZINGAS" and IVCashrw.Spec!="Leasing") then begin
+			res = true;
+			i = rwcnt;
+		end;
+	end;
+
+CheckPinPadCash = res;
+return;
+end;
+
 //END-CUST PST 2015-September-29
 
 global

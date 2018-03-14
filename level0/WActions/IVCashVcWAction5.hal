@@ -110,6 +110,56 @@ external updating procedure ProceedChangeAddressNPTSSClass();
 external updating procedure ProceedChangeTermsNPTSSClass();
 remote procedure CheckIfItemInStock(record IVCashVc,var string,var longint);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 15:46:41
 external procedure CancelAndOverrideLogout();// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 14 November 2017 18:11:28
+external function boolean CheckPinPadCash(record IVCashVc);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 16:54:55
+external updating function boolean PinPadVoid2(longint);
+external function boolean PinPadCash(var record IVCashVc,var string);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 17:00:33
+
+
+updating function longint CheckPinPadTerminal(integer wn,var record IVCashVc IVCashr)// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 16:43:33
+begin
+	record PDVc PDr;
+  record LSerialPortDeviceVc LSPDr;
+  record LocalMachineBlock LMb;
+  record PinPadCntVc PinPadCntr,oldPinPadCntr;
+  string 100 response;
+  longint res;
+  
+  res = 0;
+  
+  blockload(LMb);
+  
+  if LMb.DefaulBaggerSupervisor == 1 then begin
+		PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+		if ReadFirstMain(PinPadCntr,1,true) then begin end;
+		if PinPadVoid2(PinPadCntr.ToBeVoided) then begin
+			if CheckPinPadCash(IVCashr) == true then begin
+				if PinPadCash(IVCashr,response) == true then begin
+					PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+					ResetLoop(PinPadCntr);
+					if ReadFirstMain(PinPadCntr,1,true) then begin end;
+					IVCashr.InvComment = "CEKIS";
+					IVCashr.BankCode = PinPadCntr.Counter;
+				end else begin
+					if response == "SKIP" then begin
+					end else begin
+						MessageBox(1,"NEAPTARNAUTI!!!");
+						res = 1;
+					end;
+				end;
+			end else begin
+				IVCashr.InvComment = "CEKIS";
+			end;
+		end else begin
+			MessageBox(18144,"");
+			res = 18144;
+		end; //PinPad void
+	end else begin
+		IVCashr.InvComment = "CEKIS";
+	end;
+	
+	CheckPinPadTerminal = res;
+return;
+end;
 
 function Integer HashTouchScreenPageCode(string tstr)
 begin
@@ -1556,6 +1606,14 @@ begin
         err = 1;
       end;
     end;
+  end;
+  
+  if (err==0) then begin
+  	err = CheckPinPadTerminal(wn,IVCashr);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 16:42:46
+  	if(err!=0)then begin
+  		new_recordf = false;
+  		
+  	end;
   end;
   if (err==0) then begin
     if (IVCashPrintReceipt(wn,IVCashr,prevIVCashr,-1,true,true,LMb.IncrementalReceiptPrinting,wnst)==false) then begin
@@ -4030,6 +4088,14 @@ begin
       end;
     end;
   end;
+  
+  if (err==0) then begin
+  	err = CheckPinPadTerminal(wn,IVCashr);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 16:42:46
+  	if(err>0)then begin
+  		new_recordf = false;
+  	end;
+  end;
+  
   if (err==0) then begin
     if (IVCashPrintReceipt(wn,IVCashr,prevIVCashr,-1,true,true,LMb.IncrementalReceiptPrinting,wnst)==false) then begin
 //      MessageBox(22165,"");
