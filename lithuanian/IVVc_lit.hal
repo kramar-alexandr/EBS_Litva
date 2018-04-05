@@ -890,6 +890,15 @@ begin
   RadioButton(h,v,0,0,"¯traukti",flags[13]);
   RadioButton(h,v+=16,1,0,"Tik minusin˜s faktðros",flags[13]);
   RadioButton(h,v+=16,2,0,"Ne°traukti",flags[13]);
+  
+  ButtonFrame(h=60,vm=(v+=45),123,3,"PVM mok˜tojas");// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 5 April 2018 14:35:26
+  RadioButton(h,v,0,0,"Visos faktðros",flags[16]);
+  RadioButton(h,v+=16,1,0,"Tik °mon˜s",flags[16]);
+  RadioButton(h,v+=16,2,0,"Be °moni÷",flags[16]);
+  
+  vm = vm - 61;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 5 April 2018 14:37:00
+  v = v-99;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 5 April 2018 14:37:01
+  
   EditFieldTL(h=310,v=vm-20, 50,"Preki÷ kiekis",  M4UVAL,Normal,10,vals0,false,0);
   ButtonFrame(h=250,v+=32,123,2,"Preki÷ kiekis");
   RadioButton(h,v,0,0,"Tik su didesniu kiekiu",flags[14]);

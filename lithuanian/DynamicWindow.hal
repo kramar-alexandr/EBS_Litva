@@ -44,6 +44,8 @@ begin
   EditField(h1,v+=vs,82,"Apmok˜ti iki",Normal,PayDate,false,PasteCurDate);
   EditField(h1,v+=vs,82,"‰ekio nr",Normal,RefStr,false,0);
   EditField(h1,v+20,82,"RMA nr.",Normal,OfficialSerNr,false,LegalInvNrSClass);
+  EditField(h2,v+20,135,"Objektas",Normal,Objects,false,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 5 April 2018 14:25:48
+
   //EditField(h1,v+=vs,82,"Pasl. prist. data",Normal,ServiceDelDate,false,PasteCurDate);
   ButtonFrame(h1,v+56,60,2,"Bazin˜ kaina");
   RadioButton(h1,v+56,0,0,"Be PVM",InclVAT);

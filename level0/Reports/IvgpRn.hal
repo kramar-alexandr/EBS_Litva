@@ -399,7 +399,8 @@ begin
   //START-CUST PST 2015-November-12
   val itmcnt;
   //END-CUST PST 2015-November-12
-
+	record CUVc CUr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 5 April 2018 14:40:27
+	
   afr = FirstInRange(RepSpec.f1,20);
   ato = LastInRange(RepSpec.f1,20);
   
@@ -504,38 +505,38 @@ begin
         end;
       end;
       
-    if ((RepSpec.flags[1]==0) and (IVr.OKFlag==0)) then begin
-      testf = false;
-    end;
-    if ((RepSpec.flags[2]==0) and (IVr.OKFlag<>0)) then begin
-      testf = false;
-    end;
-    if ((ProgramType!=7) and (ProgramType!=8)) then begin
-      if ((RepSpec.flags[3]==0) and (IVr.InvType==kInvoiceTypeNormal or IVr.InvType==kInvoiceTypeNormalSpecialSales)) then begin
-        testf = false;
-      end;
-    end;
-    if ((RepSpec.flags[4]==0) and (IVr.InvType==kInvoiceTypeCash or IVr.InvType==kInvoiceTypeCashInvoiceReceiptPRT)) then begin
-      testf = false;
-    end;
-//    if (ProgramType<2) then begin
-      if ((RepSpec.flags[5]==0) and (IVr.InvType==kInvoiceTypeCredit or IVr.InvType==kInvoiceTypeCreditSpecialSales)) then begin
-        testf = false;
-      end;
-//    end;
-    if ((RepSpec.flags[6]==0) and (IVr.InvType==kInvoiceTypeInterest)) then begin
-      testf = false;
-    end;
-    if ((RepSpec.flags[7]==0) and (IVr.InvType==kInvoiceTypePrepayment)) then begin
-      testf = false;
-    end;
-    if ((RepSpec.flags[8]==0) and (IVr.InvType==kInvoiceTypeDownpayment)) then begin
-      testf = false;
-    end;
+			if ((RepSpec.flags[1]==0) and (IVr.OKFlag==0)) then begin
+				testf = false;
+			end;
+			if ((RepSpec.flags[2]==0) and (IVr.OKFlag<>0)) then begin
+				testf = false;
+			end;
+			if ((ProgramType!=7) and (ProgramType!=8)) then begin
+				if ((RepSpec.flags[3]==0) and (IVr.InvType==kInvoiceTypeNormal or IVr.InvType==kInvoiceTypeNormalSpecialSales)) then begin
+					testf = false;
+				end;
+			end;
+			if ((RepSpec.flags[4]==0) and (IVr.InvType==kInvoiceTypeCash or IVr.InvType==kInvoiceTypeCashInvoiceReceiptPRT)) then begin
+				testf = false;
+			end;
+	//    if (ProgramType<2) then begin
+				if ((RepSpec.flags[5]==0) and (IVr.InvType==kInvoiceTypeCredit or IVr.InvType==kInvoiceTypeCreditSpecialSales)) then begin
+					testf = false;
+				end;
+	//    end;
+			if ((RepSpec.flags[6]==0) and (IVr.InvType==kInvoiceTypeInterest)) then begin
+				testf = false;
+			end;
+			if ((RepSpec.flags[7]==0) and (IVr.InvType==kInvoiceTypePrepayment)) then begin
+				testf = false;
+			end;
+			if ((RepSpec.flags[8]==0) and (IVr.InvType==kInvoiceTypeDownpayment)) then begin
+				testf = false;
+			end;
 
-    if ((RepSpec.flags[10]<>0) and (IVr.SVONr==-1)) then begin
-      testf = false;
-    end;      
+			if ((RepSpec.flags[10]<>0) and (IVr.SVONr==-1)) then begin
+				testf = false;
+			end;      
       if (afr<>-1) then begin
         if (IVr.SerNr<afr) then begin
            testf = false;
@@ -556,6 +557,25 @@ begin
       end;
       if (IVr.Invalid<>0) then begin testf = false; end;
       if (IVr.InvType==kInvoiceTypePrepayment) then begin testf = false; end;
+      // Edit Start ---------------------------------------------- Edit Start
+	//Thursday, 5 April 2018 14:46:33
+	
+      if(testf)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 5 April 2018 14:41:06
+      	if(RepSPec.flags[16]>0)then begin
+      		CUr.Code = IVr.CustCode;
+      		if(readfirstmain(CUr,1,true))then begin
+      			if(RepSPec.flags[16]==1)then begin
+      				testf = nonblank(CUr.VATNr);
+      			end;
+      			if(RepSPec.flags[16]==2)then begin
+      				testf = blank(CUr.VATNr);
+      			end;
+      		end;
+      	end;
+      end;
+      
+	// Edit End ---------------------------------------------- Edit End
+	
       if (testf) then begin
         testfrowf["Location"] = false;
         testfrowf["Item"] = false;
