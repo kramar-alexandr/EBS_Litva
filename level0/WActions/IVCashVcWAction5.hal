@@ -128,18 +128,25 @@ begin
   
   blockload(LMb);
   
-  if LMb.DefaulBaggerSupervisor == 1 then begin
+  logtext(0,"CheckPinPadTerminal " & IVCashr.SerNr);
+  logtext(0,"LMb.DefaulBaggerSupervisor " & LMb.DefaulBaggerSupervisor);
+  if (LMb.DefaulBaggerSupervisor==1) then begin
 		PinPadCntr.LocalMachine = LMb.LocalMachineCode;
 		if ReadFirstMain(PinPadCntr,1,true) then begin end;
+		logtext(0,"PinPadCntr.ToBeVoided " & PinPadCntr.ToBeVoided);
 		if PinPadVoid2(PinPadCntr.ToBeVoided) then begin
+			logtext(0,"CheckPinPadCash begin");
 			if CheckPinPadCash(IVCashr) == true then begin
+				logtext(0,"PinPadCash begin");
 				if PinPadCash(IVCashr,response) == true then begin
+					logtext(0,"PinPadCash true");
 					PinPadCntr.LocalMachine = LMb.LocalMachineCode;
 					ResetLoop(PinPadCntr);
 					if ReadFirstMain(PinPadCntr,1,true) then begin end;
 					IVCashr.InvComment = "CEKIS";
 					IVCashr.BankCode = PinPadCntr.Counter;
 				end else begin
+					logtext(0,"PinPadCash false");
 					if response == "SKIP" then begin
 					end else begin
 						MessageBox(1,"NEAPTARNAUTI!!!");
@@ -1608,6 +1615,7 @@ begin
     end;
   end;
   
+  logtext(0,"PrepareToSentToTermonal");
   if (err==0) then begin
   	err = CheckPinPadTerminal(wn,IVCashr);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 13 March 2018 16:42:46
   	if(err!=0)then begin
@@ -1615,6 +1623,7 @@ begin
   		
   	end;
   end;
+  logtext(0,"After sendto terminal");
   if (err==0) then begin
     if (IVCashPrintReceipt(wn,IVCashr,prevIVCashr,-1,true,true,LMb.IncrementalReceiptPrinting,wnst)==false) then begin
 //      MessageBox(22165,"");

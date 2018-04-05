@@ -428,6 +428,7 @@ function Integer PinPadOpenPort(record LSerialPortDeviceVc LSPDr)
 begin
   Integer res;
   
+  logtext(0,"PinPadOpenPort " & LSPDr.Port);
   if (OpenComPort(0,LSPDr.Port,LSPDr.BaudRate,LSPDr.Parity,LSPDr.ByteSize,LSPDr.StopBits,LSPDr.FlowControl)) then begin
     //SetComPortCodepage("CP1257");
     SetComPortCodepage("UTF-8");
@@ -627,6 +628,7 @@ begin
   record PinPadCntVc PinPadCntr,oldPinPadCntr;
   boolean testf2,noresponse;
   
+  logtext(0,"PinPadVoid2 number " & number);
   
 	if number == 0 then begin
 	  testf2 = true;
@@ -634,94 +636,100 @@ begin
 	end;
 
   BlockLoad(LMb);  
+  logtext(0,"FindLocalSerialPortDevice begin ");
   if (FindLocalSerialPortDevice(kSerialPortDeviceClassCreditCardTerminal,-1,LMb.LocalMachineCode,LSPDr)==false) then begin  
   end;
+  logtext(0,"FindLocalSerialPortDevice end ");
   
   noErr = 0;
   res = PinPadOpenPort(LSPDr);
-  
-	CtrlSeq = "6VOI10.01" & chr(ST05_SCM);
-	CtrlSeq = CtrlSeq & AddZero(number,10) & chr(ST05_SCM);
-	CtrlSeq = CtrlSeq & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
-	CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC(CtrlSeq))); 
-  CtrlSeq = chr(ST05_SOC) & chr(ST05_SC0) & CtrlSeq; 
-  res = ST05WriteAndGetResponse(CtrlSeq,ST05_DELAY10,response,ResponseArea,noresponse);
-  if noresponse == true then begin
-    messagebox(18145,"");
-    PinPadClose;
-    testf2 = false;
-    goto skipf;
-  end;
-	res = ST05WriteAndGetResponse(chr(ST05_SC6),ST05_DELAY,response,ResponseArea,noresponse);
-	if noresponse == true then begin
-		messagebox(18145,"");
-		PinPadClose;
-		testf2 = false;
-		goto skipf;
-	end;
-  response1 = Right(response,len(response)-9);
-  response1 = Left(response1,3);
-  respons2 = Left(response,8);
-  respons2 = Right(respons2,2);
-  testf2 = true;
-  switch(respons2) begin
-  	case "14": res = ST05WriteAndGetResponse(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI15." & chr(ST05_ECM) & chr(HexToInt("7F")),ST05_DELAY,response,ResponseArea,noresponse);
-  	case "16": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI17." & chr(ST05_ECM) & chr(HexToInt("7D")),ST05_DELAY2);
-  		if response1 != "014" then begin
-  		  PinPadClose;
-				GetBreakReqError(response1,text);
-				MessageBox(1,text);
-				testf2 = false;
-				goto skipf;
-  	  end else begin
-  	    PinPadClose;
+  logtext(0,"PinPadVoid2 res0 " & res);
+  if(res==noErr)then begin
+		CtrlSeq = "6VOI10.01" & chr(ST05_SCM);
+		CtrlSeq = CtrlSeq & AddZero(number,10) & chr(ST05_SCM);
+		CtrlSeq = CtrlSeq & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_SCM) & chr(ST05_ECM);
+		CtrlSeq = CtrlSeq & chr(HexToInt(CalculateLRC(CtrlSeq))); 
+		CtrlSeq = chr(ST05_SOC) & chr(ST05_SC0) & CtrlSeq; 
+		res = ST05WriteAndGetResponse(CtrlSeq,ST05_DELAY10,response,ResponseArea,noresponse);
+		logtext(0,"PinPadVoid2 res1 " & res);
+		if noresponse == true then begin
+			messagebox(18145,"");
+			PinPadClose;
+			testf2 = false;
+			goto skipf;
+		end;
+		res = ST05WriteAndGetResponse(chr(ST05_SC6),ST05_DELAY,response,ResponseArea,noresponse);
+		logtext(0,"PinPadVoid2 res2 " & res & " " & noresponse);
+		if(noresponse==true)then begin
+			messagebox(18145,"");
+			PinPadClose;
+			testf2 = false;
+			goto skipf;
+		end;
+		response1 = Right(response,len(response)-9);
+		response1 = Left(response1,3);
+		respons2 = Left(response,8);
+		respons2 = Right(respons2,2);
+		testf2 = true;
+		switch(respons2) begin
+			case "14": res = ST05WriteAndGetResponse(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI15." & chr(ST05_ECM) & chr(HexToInt("7F")),ST05_DELAY,response,ResponseArea,noresponse);
+			case "16": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI17." & chr(ST05_ECM) & chr(HexToInt("7D")),ST05_DELAY2);
+				if response1 != "014" then begin
+					PinPadClose;
+					GetBreakReqError(response1,text);
+					MessageBox(1,text);
+					testf2 = false;
+					goto skipf;
+				end else begin
+					PinPadClose;
+					PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+					if ReadFirstMain(PinPadCntr,1,true) then begin end;
+					RecordCopy(oldPinPadCntr,PinPadCntr);
+					PinPadCntr.ToBeVoided = 0;
+					RecordUpdate(oldPinPadCntr,PinPadCntr,false);
+					testf2 = true;
+					goto skipf;
+				end;
+		end;   
+		if noresponse == true then begin
+			messagebox(18145,"");
+			PinPadClose;
+			testf2 = false;
+			goto skipf;
+		end;
+		response1 = Right(response,len(response)-9);
+		response1 = Left(response1,3);
+		response = Left(response,8);
+		response = Right(response,2);
+		switch(response) begin
+			case "16": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI17." & chr(ST05_ECM) & chr(HexToInt("7D")),ST05_DELAY);
+				if response1 != "014" then begin
+					GetBreakReqError(response1,text);
+					MessageBox(1,text);
+					testf2 = false;
+				end else begin
+					PinPadCntr.LocalMachine = LMb.LocalMachineCode;
+					if ReadFirstMain(PinPadCntr,1,true) then begin end;
+					RecordCopy(oldPinPadCntr,PinPadCntr);
+					PinPadCntr.ToBeVoided = 0;
+					RecordUpdate(oldPinPadCntr,PinPadCntr,false);
+					testf2 = true;
+				end;
+				PinPadClose;
+			case "12": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI13." & chr(ST05_ECM) & chr(HexToInt("79")),ST05_DELAY);
+			PinPadClose;
+			testf = PrintPinPadReceipt(ResponseArea,"VOID",text2);
+			if ResponseArea[19] == "Y" then begin
 				PinPadCntr.LocalMachine = LMb.LocalMachineCode;
 				if ReadFirstMain(PinPadCntr,1,true) then begin end;
 				RecordCopy(oldPinPadCntr,PinPadCntr);
 				PinPadCntr.ToBeVoided = 0;
 				RecordUpdate(oldPinPadCntr,PinPadCntr,false);
 				testf2 = true;
-				goto skipf;
-  	  end;
-  end;   
-  if noresponse == true then begin
-    messagebox(18145,"");
-    PinPadClose;
-    testf2 = false;
-    goto skipf;
-  end;
-  response1 = Right(response,len(response)-9);
-  response1 = Left(response1,3);
-  response = Left(response,8);
-  response = Right(response,2);
-  switch(response) begin
-  	case "16": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI17." & chr(ST05_ECM) & chr(HexToInt("7D")),ST05_DELAY);
-  	  if response1 != "014" then begin
-  	    GetBreakReqError(response1,text);
-  		  MessageBox(1,text);
-        testf2 = false;
 			end else begin
-				PinPadCntr.LocalMachine = LMb.LocalMachineCode;
-				if ReadFirstMain(PinPadCntr,1,true) then begin end;
-				RecordCopy(oldPinPadCntr,PinPadCntr);
-				PinPadCntr.ToBeVoided = 0;
-				RecordUpdate(oldPinPadCntr,PinPadCntr,false);
-  	    testf2 = true;
-  	  end;
-  	  PinPadClose;
-  	case "12": res = ST05Write2(chr(ST05_SC6) & chr(ST05_SOC) & chr(ST05_SC0) & chr(ST05_SC6) & "VOI13." & chr(ST05_ECM) & chr(HexToInt("79")),ST05_DELAY);
-  	PinPadClose;
-  	testf = PrintPinPadReceipt(ResponseArea,"VOID",text2);
-		if ResponseArea[19] == "Y" then begin
-			PinPadCntr.LocalMachine = LMb.LocalMachineCode;
-			if ReadFirstMain(PinPadCntr,1,true) then begin end;
-			RecordCopy(oldPinPadCntr,PinPadCntr);
-			PinPadCntr.ToBeVoided = 0;
-			RecordUpdate(oldPinPadCntr,PinPadCntr,false);
-			testf2 = true;
-		end else begin
-	    testf2 = false;
-	    MessageBox(1,text2[17]);
+				testf2 = false;
+				MessageBox(1,text2[17]);
+			end;
 		end;
   end;
  
@@ -1344,15 +1352,19 @@ begin
   if (FindLocalSerialPortDevice(kSerialPortDeviceClassCreditCardTerminal,-1,LMb.LocalMachineCode,LSPDr)==false) then begin  
   end;
   
-
+	logtext(0,"PinPadCash begin");
   noErr = 0;
+  logtext(0,"PinPadCash opencmoport");
   res = PinPadOpenPort(LSPDr);
   printf = false;
+  logtext(0,"PinPadCash res " & res);
   if (res==noErr) then begin    
     noErr = 0;
     if IVCashr.InvType == kInvoiceTypeCredit then begin
+    	logtext(0,"PinPadCash -");
       res = PinPadCashReturn(LSPDr,IVCashr,false,printf,response);
     end else begin
+    	logtext(0,"PinPadCash +");
       res = PinPadCashBegin(IVCashr,false,printf,response);
     end;
   end;

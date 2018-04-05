@@ -979,6 +979,8 @@ begin
   string 255 index;
   Integer segs;
   
+  logtext(0,"FindLocalSerialPortDevice type " & type & " printer " & printer & " machinecode " & machinecode);
+  
   if (machinecode=="") then begin
     goto LFindLocalSerialPortDevice;
   end;
