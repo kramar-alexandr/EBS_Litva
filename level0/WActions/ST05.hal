@@ -871,19 +871,20 @@ begin
 	integer res1,res2,rwcnt,i,nwn,wn;
 	string 255 CtrlSeq,CtrlSeq2;
 	record LocalMachineBlock LMb;
-	row IVVc IVCashrw;
+	row IVCashVc IVCashrw;
 	val sum;
 	string 255 response1;
 	array string 255 ResponseArea;
 	record RcVc RepSpec;
 	boolean testf;
 	array string 255 text2;
-	record IVVc oldIVCashr;
+	record IVCashVc oldIVCashr;
 	record NotepadVc Noter;
 	record PinPadCntVc PinPadCntr,oldPinPadCntr;
 	string 100 text;
 	boolean noresponse;
 	
+	logtext(0,"PinPadCashBegin");
 	blockload(LMb);
 	res = 0;
 	PinPadCntr.LocalMachine = LMb.LocalMachineCode;
@@ -904,6 +905,7 @@ begin
 			end;
 		end;
 	end;
+	logtext(0,"PinPadCashBegin sum " & sum);
 	if fallback == false then begin
 	  CtrlSeq = "HPUR10.01" & chr(ST05_SCM);
 	  CtrlSeq = CtrlSeq & AddZero(PinPadCntr.Counter,10) & chr(ST05_SCM);
@@ -927,6 +929,7 @@ begin
     goto skipf;
   end;
   res = ST05WriteAndGetResponse(chr(ST05_SC6),ST05_DELAY,response,ResponseArea,noresponse);
+  logtext(0,"PinPadCashBegin ST05WriteAndGetResponse " & res);
   if noresponse == true then begin
     messagebox(18145,"");
     PinPadClose;
