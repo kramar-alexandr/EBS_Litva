@@ -278,6 +278,10 @@ begin
   integer rwcnt,i;
   record ResListVc ResListr;
   row ResListVc ResListrw;
+  record ResListBrokVc ResListBr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:26:23
+  row ResListBrokVc ResListBrw;
+  record ResListDemoVc ResListDr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:26:23
+  row ResListDemoVc ResListDrw;
   val reserved;
   boolean printf;
   
@@ -319,6 +323,39 @@ begin
             end;
           end;
         end;
+        
+        // Edit Start ---------------------------------------------- Edit Start
+	//Thursday, 12 April 2018 10:32:18
+	
+        
+        ResListBr.Loc = Locr.Code;
+        ResetLoop(ResListBr);
+        If ReadFirstMain(ResListBr,1,true)  then begin
+          rwcnt = MatRowCnt(ResListBr);
+          for (i=0;i<rwcnt;i=i+1) begin
+            MatRowGet(ResListBr,i,ResListBrw); // EVS: HAL-237
+            if ResListBrw.ArtCode == INr.Code then begin
+              reserved = reserved + ResListBrw.Qty;
+            end;
+          end;
+        end;
+        
+        ResListDr.Loc = Locr.Code;
+        ResetLoop(ResListDr);
+        If ReadFirstMain(ResListDr,1,true)  then begin
+          rwcnt = MatRowCnt(ResListDr);
+          for (i=0;i<rwcnt;i=i+1) begin
+            MatRowGet(ResListDr,i,ResListDrw); // EVS: HAL-237
+            if ResListDrw.ArtCode == INr.Code then begin
+              reserved = reserved + ResListDrw.Qty;
+            end;
+          end;
+        end;
+        
+        
+	// Edit End ---------------------------------------------- Edit End
+	
+        
         WebOutStringFormatNL("<Balance>" & ValToString(ISr.Instock - reserved,M4UVal,SysFormatRec.thousSep,SysFormatRec.decimalPt,0) & "</Balance>");
         WebOutStringFormatNL("</LocationBal>")
       end;
@@ -727,6 +764,10 @@ begin
   boolean testf;
   record ResListVc ResListr,oldResListr;
   row ResListVc ResListrw;
+  record ResListBrokVc ResListBr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:26:23
+  row ResListBrokVc ResListBrw;
+  record ResListDemoVc ResListDr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:26:23
+  row ResListDemoVc ResListDrw;
   integer i,rwcnt;
   xml cust;
   area a;

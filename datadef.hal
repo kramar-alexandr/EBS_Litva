@@ -482,6 +482,34 @@ begin
   KeySegment(Loc);
   EndRecord;
   
+  RecordBegin(ResListBrokVc,-,"ResListBrokVc");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 11 April 2018 13:33:46
+  RecordField(Loc,M4UStr,10,0);
+  RecordField(Name,M4UStr,10,0);
+  RecordField(Math,M4Matrix,0,0);
+  ArrayBegin(Math,-,1);
+  ArrayField(ArtCode,M4Code,20,0);
+  ArrayField(Description,M4Str,60,0);
+  ArrayField(Qty,M4Val,0,0);
+  ArrayField(Comment,M4Str,60,0);
+  EndArray;
+  MainKeyBegin(Loc,0);
+  KeySegment(Loc);
+  EndRecord;
+  
+  
+  RecordBegin(ResListDemoVc,-,"ResListDemoVc");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 11 April 2018 13:33:47
+  RecordField(Loc,M4UStr,10,0);
+  RecordField(Name,M4UStr,10,0);
+  RecordField(Math,M4Matrix,0,0);
+  ArrayBegin(Math,-,1);
+  ArrayField(ArtCode,M4Code,20,0);
+  ArrayField(Description,M4Str,60,0);
+  ArrayField(Qty,M4Val,0,0);
+  ArrayField(Comment,M4Str,60,0);
+  EndArray;
+  MainKeyBegin(Loc,0);
+  KeySegment(Loc);
+  EndRecord;
  
 // EVS: HAL-118 why is this here?
 //   RecordBegin(PLDefVc,-,"pldef2");

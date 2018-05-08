@@ -274,6 +274,10 @@ begin
   record SysFormatBlock SysFormatRec;
   record ResListVc ResListr;
   row ResListVc ResListrw;
+  record ResListBrokVc ResListBr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:26:23
+  row ResListBrokVc ResListBrw;
+  record ResListDemoVc ResListDr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:26:23
+  row ResListDemoVc ResListDrw;
   integer rwcnt,k;
   val restot;
   
@@ -507,6 +511,34 @@ begin
 			  		    end;
 			  		  end;
 			  		end;
+			  		// Edit Start ---------------------------------------------- Edit Start
+	//Thursday, 12 April 2018 10:28:13
+	
+			  		resetloop(ResListBr);
+			  		ResListBr.Loc = ISr.Location;
+			  		if ReadFirstMain(ResListBr,1,true) then begin
+			  		  rwcnt = MatRowcnt(ResListBr);
+			  		  for (k=0;k<rwcnt;k=k+1) begin
+			  		    MatRowGet(ResListBr,k,ResListBrw);
+			  		    if ResListBrw.ArtCode == ISr.Code then begin
+			  		      restot = restot + ResListBrw.Qty;
+			  		    end;
+			  		  end;
+			  		end;
+			  		resetloop(ResListDr);
+			  		ResListDr.Loc = ISr.Location;
+			  		if ReadFirstMain(ResListDr,1,true) then begin
+			  		  rwcnt = MatRowcnt(ResListDr);
+			  		  for (k=0;k<rwcnt;k=k+1) begin
+			  		    MatRowGet(ResListDr,k,ResListDrw);
+			  		    if ResListDrw.ArtCode == ISr.Code then begin
+			  		      restot = restot + ResListDrw.Qty;
+			  		    end;
+			  		  end;
+			  		end;
+			  					  		
+	// Edit End ---------------------------------------------- Edit End
+	
 			  		locsum = locsum - restot;
 			  		if ISr.Instock > 0 then begin
 			        WebOutStringFormatNL("<td align=""center"" ; style=""width:100px"">" & ValToString(ISr.Instock-restot,M4UVal,SysFormatRec.thousSep,SysFormatRec.decimalPt,0) & "</td>");
@@ -548,6 +580,10 @@ begin
   record SysFormatBlock SysFormatRec;
   record ResListVc ResListr;
   row ResListVc ResListrw;
+  record ResListBrokVc ResListBr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:28:54
+  row ResListBrokVc ResListBrw;
+  record ResListDemoVc ResListDr;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 12 April 2018 10:28:54
+  row ResListDemoVc ResListDrw;
   integer rwcnt,k;
   val restot;
   
@@ -781,6 +817,34 @@ begin
 			  		    end;
 			  		  end;
 			  		end;
+			  		// Edit Start ---------------------------------------------- Edit Start
+	//Thursday, 12 April 2018 10:30:01
+	
+			  		resetloop(ResListBr);
+			  		ResListBr.Loc = ISr.Location;
+			  		if ReadFirstMain(ResListBr,1,true) then begin
+			  		  rwcnt = MatRowcnt(ResListBr);
+			  		  for (k=0;k<rwcnt;k=k+1) begin
+			  		    MatRowGet(ResListBr,k,ResListBrw);
+			  		    if ResListBrw.ArtCode == ISr.Code then begin
+			  		      restot = restot + ResListBrw.Qty;
+			  		    end;
+			  		  end;
+			  		end;
+			  		resetloop(ResListDr);
+			  		ResListDr.Loc = ISr.Location;
+			  		if ReadFirstMain(ResListDr,1,true) then begin
+			  		  rwcnt = MatRowcnt(ResListDr);
+			  		  for (k=0;k<rwcnt;k=k+1) begin
+			  		    MatRowGet(ResListDr,k,ResListDrw);
+			  		    if ResListDrw.ArtCode == ISr.Code then begin
+			  		      restot = restot + ResListDrw.Qty;
+			  		    end;
+			  		  end;
+			  		end;
+			  		
+	// Edit End ---------------------------------------------- Edit End
+	
 			  		locsum = locsum + restot;
 			  		if restot > 0 then begin
 			        WebOutStringFormatNL("<td align=""center"" ; style=""width:100px"">" & ValToString(restot,M4UVal,SysFormatRec.thousSep,SysFormatRec.decimalPt,0) & "</td>");

@@ -324,6 +324,8 @@ begin
   Setting("Superkam÷ preki÷ parametras",RetItmTClass,modSL);
   Setting("Pin Pad Counter",PinPadCntLClass,modSL);
   Setting("Rezervacijos",ResListLClass,modSL);
+  Setting("Rezervacijos - BROKAI",ResListBrokLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 11 April 2018 13:34:09
+  Setting("Rezervacijos - DEMO",ResListDemoLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 11 April 2018 13:34:09
 return;
 end;
 
@@ -1688,6 +1690,50 @@ begin
 	
 	return;
 end;
+
+window ResListBrokLClass:1
+  wtag("language","LIT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,hm,hs,t,v,v2,v3,vm,vs,width,h5;
+  string 255 label;
+  Integer tilenr,flipnr,f;
+  record UserVc Userr;
+  
+  windowBegin("Rezervacijos parduotuv˜se - BROKAI",ResListBrokLClass,CGmlist,-);
+  SetWRect(64,80,709,298);
+  SpawnClass(ResListBrokDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(ResListBrokVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Parduotuv˜",Loc,false,Loc);
+//  RlCol(4,4,"Pavadinimas",Name,false);
+  SearchField("Ieäkoti");
+  EndWindow;
+	
+	return;
+end;
+
+window ResListDemoLClass:1
+  wtag("language","LIT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,hm,hs,t,v,v2,v3,vm,vs,width,h5;
+  string 255 label;
+  Integer tilenr,flipnr,f;
+  record UserVc Userr;
+  
+  windowBegin("Rezervacijos parduotuv˜se - DEMO",ResListDemoLClass,CGmlist,-);
+  SetWRect(64,80,709,298);
+  SpawnClass(ResListDemoDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(ResListDemoVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Parduotuv˜",Loc,false,Loc);
+//  RlCol(4,4,"Pavadinimas",Name,false);
+  SearchField("Ieäkoti");
+  EndWindow;
+	
+	return;
+end;
   
 window ResListDClass:1
   wtag("language","LIT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
@@ -1700,6 +1746,60 @@ begin
   windowBegin("Rezervacija parduotuv˜je",ResListDClass,CGview,-);
   SetWRect(20,80,840,881);
   UseView(ResListVc);
+  Sizeable(-1,-1,0,0);
+  v = 6; vs = 20; h = 80; h2 = 240;
+  EditField(80,v+20,100,"Parduotuv˜",Normal,Loc,false,LocationSClass);
+ // EditField(80,v+40,100,"Parduotuv˜",Normal,Name,false,0);
+  EnterSkip(Math);
+  MatrixBegin(h=10,v+=135,-25,-10,-,300); // Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 December 2017 17:30:49
+  MatCol(1,24,"Prek˜",0,ArtCode,false,INSClass);
+  MatCol(1,94,"Apraäymas",0,Description,false,0);
+  MatCol(1,200,"Kiekis",0,Qty,false,0);
+  MatCol(1,250,"Komentaras",0,Comment,false,0);
+  EndMatrix;
+  EndWindow;
+	
+	return;
+end;
+
+window ResListBrokDClass:1
+  wtag("language","LIT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,hm,hs,t,v,v2,v3,vm,vs,width,h5;
+  string 255 label;
+  Integer tilenr,flipnr,f;
+  record UserVc Userr;
+  
+  windowBegin("Rezervacija parduotuv˜je - BROKAI",ResListBrokDClass,CGview,-);
+  SetWRect(20,80,840,881);
+  UseView(ResListBrokVc);
+  Sizeable(-1,-1,0,0);
+  v = 6; vs = 20; h = 80; h2 = 240;
+  EditField(80,v+20,100,"Parduotuv˜",Normal,Loc,false,LocationSClass);
+ // EditField(80,v+40,100,"Parduotuv˜",Normal,Name,false,0);
+  EnterSkip(Math);
+  MatrixBegin(h=10,v+=135,-25,-10,-,300); // Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 December 2017 17:30:49
+  MatCol(1,24,"Prek˜",0,ArtCode,false,INSClass);
+  MatCol(1,94,"Apraäymas",0,Description,false,0);
+  MatCol(1,200,"Kiekis",0,Qty,false,0);
+  MatCol(1,250,"Komentaras",0,Comment,false,0);
+  EndMatrix;
+  EndWindow;
+	
+	return;
+end;
+
+window ResListDemoDClass:1
+  wtag("language","LIT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,hm,hs,t,v,v2,v3,vm,vs,width,h5;
+  string 255 label;
+  Integer tilenr,flipnr,f;
+  record UserVc Userr;
+  
+  windowBegin("Rezervacija parduotuv˜je - DEMO",ResListDemoDClass,CGview,-);
+  SetWRect(20,80,840,881);
+  UseView(ResListDemoVc);
   Sizeable(-1,-1,0,0);
   v = 6; vs = 20; h = 80; h2 = 240;
   EditField(80,v+20,100,"Parduotuv˜",Normal,Loc,false,LocationSClass);
