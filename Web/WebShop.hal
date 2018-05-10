@@ -474,7 +474,7 @@ global webpublic
 updating procedure WebNewCustomer()
 begin
   record CUVc CUr,oldCUr;
-  string 255 tstr;
+  string 255 tstr,custcode;
   boolean testf;
   xml cust;
   area a;
@@ -482,99 +482,120 @@ begin
   WebGetPostData(a);
   cust = parseXmlArea(a);
   
+  logtext(0,"WebNewCustomer");
+  
   if (SetCompany(1,false)) then begin end;
+  custcode = XmlGet(cust,"Customer/Code");
+lTryWithCode:;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 10 May 2018 14:33:37
   tstr = "";
   tstr = XmlGet(cust,"Customer/Name");
-  if tstr != "" then begin
-  if XmlGet(cust,"Customer/Code") == "" then begin
-    RecordNew(CUr);
-    if (GetNextCustNr(tstr)) then begin end;
-    CUr.Code = tstr;
-    CUr.CUType = 1;
-    CUr.InterestFlag = 1;
-    CUr.OnAccount = 1;
-    CUr.Name = XmlGet(cust,"Customer/Name");
-    CUr.Person = XmlGet(cust,"Customer/Contact");
-    CUr.Phone = XmlGet(cust,"Customer/Phone");
-    CUr.RegNr1 = XmlGet(cust,"Customer/CompanyCode");
-    CUr.VATNr = XmlGet(cust,"Customer/VATCode");
-    CUr.InvAddr0 = XmlGet(cust,"Customer/Address1");
-    CUr.InvAddr1 = XmlGet(cust,"Customer/Address2");
-    CUr.InvAddr2 = XmlGet(cust,"Customer/Address3");
-    CUr.InvAddr3 = XmlGet(cust,"Customer/Address4");
-    CUr.InvAddr4 = XmlGet(cust,"Customer/Address5");
-    CUr.eMail = XmlGet(cust,"Customer/Email");
-    CUr.PLCode = XmlGet(cust,"Customer/PriceList");
-    CUr.WebName = XmlGet(cust,"Customer/WebName");
-    CUr.WebSurname = XmlGet(cust,"Customer/WebSurname");
-    CUr.WebShopImport = stringtoint(XmlGet(cust,"Customer/WebShopImport"));
-    CUr.AdvancedPrice = stringtoint(XmlGet(cust,"Customer/AdvancedPricelist"));
-    
-  
-    if recordstore(CUr,false) then begin 
-      WebSetContentType("text/xml");
-      WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
-      WebOutStringFormatNL("<Result>");
-      WebOutStringFormatNL("<Status>" & "OK" & "</Status>");
-      WebOutStringFormatNL("<NewCustCode>" & tstr & "</NewCustCode>");
-      WebOutStringFormatNL("</Result>");
-    end else begin
-      WebSetContentType("text/xml");
-      WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
-      WebOutStringFormatNL("<Result>");
-      WebOutStringFormatNL("<Status>" & "-1" & "</Status>");
-      WebOutStringFormatNL("<Comment>" & "New customer insert failed" & "</Comment>");
-      WebOutStringFormatNL("</Result>");
-    end;
-  end else begin
-    CUr.Code = XmlGet(cust,"Customer/Code");
-    if ReadFirstMain(CUr,1,true) then begin
-      RecordCopy(oldCUr,CUr);
-      CUr.CUType = 1;
-      CUr.InterestFlag = 1;
-      CUr.OnAccount = 1;
-      CUr.Name = XmlGet(cust,"Customer/Name");
-      CUr.Person = XmlGet(cust,"Customer/Contact");
-      CUr.Phone = XmlGet(cust,"Customer/Phone");
-      CUr.RegNr1 = XmlGet(cust,"Customer/CompanyCode");
-      CUr.VATNr = XmlGet(cust,"Customer/VATCode");
-      CUr.InvAddr0 = XmlGet(cust,"Customer/Address1");
-      CUr.InvAddr1 = XmlGet(cust,"Customer/Address2");
-      CUr.InvAddr2 = XmlGet(cust,"Customer/Address3");
-      CUr.InvAddr3 = XmlGet(cust,"Customer/Address4");
-      CUr.InvAddr4 = XmlGet(cust,"Customer/Address5");
-      CUr.eMail = XmlGet(cust,"Customer/Email");
-      CUr.PLCode = XmlGet(cust,"Customer/PriceList");
-      CUr.WebName = XmlGet(cust,"Customer/WebName");
-      CUr.WebSurname = XmlGet(cust,"Customer/WebSurname");
-      CUr.WebShopImport = stringtoint(XmlGet(cust,"Customer/WebShopImport"));
-      CUr.AdvancedPrice = stringtoint(XmlGet(cust,"Customer/AdvancedPricelist"));
-  
-      if RecordUpdate(oldCUr,CUr,false) == 0 then begin 
-        WebSetContentType("text/xml");
-        WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
-        WebOutStringFormatNL("<Result>");
-        WebOutStringFormatNL("<Status>" & "OK" & "</Status>");
-        WebOutStringFormatNL("<Comment>" & "Customer " & CUr.Code & " updated" & "</Comment>");
-        WebOutStringFormatNL("</Result>");
-      end else begin
-        WebSetContentType("text/xml");
-        WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
-        WebOutStringFormatNL("<Result>");
-        WebOutStringFormatNL("<Status>" & "-1" & "</Status>");
-        WebOutStringFormatNL("<Comment>" & "Customer update failed" & "</Comment>");
-        WebOutStringFormatNL("</Result>");
-      end;
-      
-    end else begin
-        WebSetContentType("text/xml");
-        WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
-        WebOutStringFormatNL("<Result>");
-        WebOutStringFormatNL("<Status>" & "-1" & "</Status>");
-        WebOutStringFormatNL("<Comment>" & "Customer not not found" & "</Comment>");
-        WebOutStringFormatNL("</Result>");
-    end;
-  end;
+  if(nonblank(tstr))then begin
+		if (blank(custcode)) then begin
+		
+			if(nonblank(XmlGet(cust,"Customer/CompanyCode")))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 10 May 2018 14:45:49
+				CUr.RegNr1 = XmlGet(cust,"Customer/CompanyCode");
+				if(readfirstkey("RegNr1",CUr,1,true))then begin
+					custcode = CUr.Code;
+					goto lTryWithCode;
+				end;
+			end;
+			if(nonblank(XmlGet(cust,"Customer/Email")))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 10 May 2018 14:45:50
+				CUr.eMail = XmlGet(cust,"Customer/Email");
+				if(readfirstkey("eMail",CUr,1,true))then begin
+					custcode = CUr.Code;
+					goto lTryWithCode;
+				end;
+			end;
+			
+		
+			RecordNew(CUr);
+			if (GetNextCustNr(tstr)) then begin end;
+			CUr.Code = tstr;
+			CUr.CUType = 1;
+			CUr.InterestFlag = 1;
+			CUr.OnAccount = 1;
+			CUr.Name = XmlGet(cust,"Customer/Name");
+			CUr.Person = XmlGet(cust,"Customer/Contact");
+			CUr.Phone = XmlGet(cust,"Customer/Phone");
+			CUr.RegNr1 = XmlGet(cust,"Customer/CompanyCode");
+			CUr.VATNr = XmlGet(cust,"Customer/VATCode");
+			CUr.InvAddr0 = XmlGet(cust,"Customer/Address1");
+			CUr.InvAddr1 = XmlGet(cust,"Customer/Address2");
+			CUr.InvAddr2 = XmlGet(cust,"Customer/Address3");
+			CUr.InvAddr3 = XmlGet(cust,"Customer/Address4");
+			CUr.InvAddr4 = XmlGet(cust,"Customer/Address5");
+			CUr.eMail = XmlGet(cust,"Customer/Email");
+			CUr.PLCode = XmlGet(cust,"Customer/PriceList");
+			CUr.WebName = XmlGet(cust,"Customer/WebName");
+			CUr.WebSurname = XmlGet(cust,"Customer/WebSurname");
+			CUr.WebShopImport = stringtoint(XmlGet(cust,"Customer/WebShopImport"));
+			CUr.AdvancedPrice = stringtoint(XmlGet(cust,"Customer/AdvancedPricelist"));
+		
+	
+			if recordstore(CUr,false) then begin 
+				WebSetContentType("text/xml");
+				WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
+				WebOutStringFormatNL("<Result>");
+				WebOutStringFormatNL("<Status>" & "OK" & "</Status>");
+				WebOutStringFormatNL("<NewCustCode>" & tstr & "</NewCustCode>");
+				WebOutStringFormatNL("</Result>");
+			end else begin
+				WebSetContentType("text/xml");
+				WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
+				WebOutStringFormatNL("<Result>");
+				WebOutStringFormatNL("<Status>" & "-1" & "</Status>");
+				WebOutStringFormatNL("<Comment>" & "New customer insert failed" & "</Comment>");
+				WebOutStringFormatNL("</Result>");
+			end;
+		end else begin
+			CUr.Code = custcode;
+			if ReadFirstMain(CUr,1,true) then begin
+				RecordCopy(oldCUr,CUr);
+				CUr.CUType = 1;
+				CUr.InterestFlag = 1;
+				CUr.OnAccount = 1;
+				CUr.Name = XmlGet(cust,"Customer/Name");
+				CUr.Person = XmlGet(cust,"Customer/Contact");
+				CUr.Phone = XmlGet(cust,"Customer/Phone");
+				CUr.RegNr1 = XmlGet(cust,"Customer/CompanyCode");
+				CUr.VATNr = XmlGet(cust,"Customer/VATCode");
+				CUr.InvAddr0 = XmlGet(cust,"Customer/Address1");
+				CUr.InvAddr1 = XmlGet(cust,"Customer/Address2");
+				CUr.InvAddr2 = XmlGet(cust,"Customer/Address3");
+				CUr.InvAddr3 = XmlGet(cust,"Customer/Address4");
+				CUr.InvAddr4 = XmlGet(cust,"Customer/Address5");
+				CUr.eMail = XmlGet(cust,"Customer/Email");
+				CUr.PLCode = XmlGet(cust,"Customer/PriceList");
+				CUr.WebName = XmlGet(cust,"Customer/WebName");
+				CUr.WebSurname = XmlGet(cust,"Customer/WebSurname");
+				CUr.WebShopImport = stringtoint(XmlGet(cust,"Customer/WebShopImport"));
+				CUr.AdvancedPrice = stringtoint(XmlGet(cust,"Customer/AdvancedPricelist"));
+	
+				if RecordUpdate(oldCUr,CUr,false) == 0 then begin 
+					WebSetContentType("text/xml");
+					WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
+					WebOutStringFormatNL("<Result>");
+					WebOutStringFormatNL("<Status>" & "OK" & "</Status>");
+					WebOutStringFormatNL("<Comment>" & "Customer " & CUr.Code & " updated" & "</Comment>");
+					WebOutStringFormatNL("</Result>");
+				end else begin
+					WebSetContentType("text/xml");
+					WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
+					WebOutStringFormatNL("<Result>");
+					WebOutStringFormatNL("<Status>" & "-1" & "</Status>");
+					WebOutStringFormatNL("<Comment>" & "Customer update failed" & "</Comment>");
+					WebOutStringFormatNL("</Result>");
+				end;
+			
+			end else begin
+					WebSetContentType("text/xml");
+					WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
+					WebOutStringFormatNL("<Result>");
+					WebOutStringFormatNL("<Status>" & "-1" & "</Status>");
+					WebOutStringFormatNL("<Comment>" & "Customer not not found" & "</Comment>");
+					WebOutStringFormatNL("</Result>");
+			end;
+		end;
   end else begin
     WebSetContentType("text/xml");
     WebOutStringFormatNL("<?xml version=""1.0"" encoding=""UTF-8""?>");
