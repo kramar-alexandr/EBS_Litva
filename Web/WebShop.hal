@@ -481,9 +481,7 @@ begin
   
   WebGetPostData(a);
   cust = parseXmlArea(a);
-  
-  logtext(0,"WebNewCustomer");
-  
+    
   if (SetCompany(1,false)) then begin end;
   custcode = XmlGet(cust,"Customer/Code");
 lTryWithCode:;// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 10 May 2018 14:33:37
