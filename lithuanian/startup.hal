@@ -14,6 +14,13 @@ begin
   Report("IDEAL - i.SAF",IDEALLitiSAFRClass,IDEALLitiSAFRn,0,modNL); 
   Report("IDEAL - Iäraäom÷ PVM s/f registras FR0672",IDEALSLVATLitRClass,IDEALSLVATLitRn,0,modSL);  
   
+  Import("SwedBank import Statement",SwedBankImportSTIClass,SwedBankImportSTIn,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 29 May 2018 13:04:05
+  Import("SEBBank import Statement",SEBBankImportSTIClass,SEBBankImportSTIn,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 29 May 2018 13:04:05
+
+	Setting("SwedBank import Statement",SwedbankImportLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 29 May 2018 13:04:09
+	Setting("SEB Bank import Statement",SEBbankImportLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 29 May 2018 15:36:35
+
+  
   SetBegin(14444);
   SetText(0,"Prek˜s grup˜");
   SetText(1,"Prek˜");
