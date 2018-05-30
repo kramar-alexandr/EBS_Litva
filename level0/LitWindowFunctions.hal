@@ -746,35 +746,35 @@ begin
       case kPOSButtonTypeOpenSession:  
         procstr = procstr & "TouchScreenOpenSession"; 
       case kPOSButtonTypeCloseSession:  
-        procstr = procstr & "TouchScreenCloseSession"; 
+        procstr = procstr & "TouchScreenCloseSession";
       case kPOSButtonTypeCorrectionInvoice:  
-        procstr = procstr & "TouchScreenCloseSession"; 
+        procstr = procstr & "TouchScreenCorrectionInvoice";
       case kPOSButtonTypePutCashFloat:  
-        procstr = procstr & "TouchScreenPutCashFloat"; 
+        procstr = procstr & "TouchScreenPutCashFloat";
       case kPOSButtonTypeGetCashFloat:  
-        procstr = procstr & "TouchScreenChangeAddress"; 
+        procstr = procstr & "TouchScreenGetCashFloat";
       case kPOSButtonTypeManagerDiscountOverride:  
-        procstr = procstr & "TouchScreenManagerDiscountOverride"; 
+        procstr = procstr & "TouchScreenManagerDiscountOverride";
       case kPOSButtonTypeOpenTaxMatrix:  
-        procstr = procstr & "TouchScreenOpenTaxMatrix"; 
+        procstr = procstr & "TouchScreenOpenTaxMatrix";
       case kPOSButtonTypeReturn:  
         procstr = procstr & "TouchScreenReturn";
       case kPOSButtonTypeCreditNote:  
-        procstr = procstr & "TouchScreenCreditNote"; 
+        procstr = procstr & "TouchScreenCreditNote";
       case kPOSButtonTypeReturnReason:  
-        procstr = procstr & "TouchScreenReturnReason"; 
+        procstr = procstr & "TouchScreenReturnReason";
         tagstr = POSBrw.Code;
       case kPOSButtonTypeReturnInvoiceNo:  
         procstr = procstr & "TouchScreenReturnInvNo";
         tagstr = POSBrw.Code;
       case kPOSButtonTypeLookupSerialNr:  
         procstr = procstr & "TouchScreenLookupSerialNr";
-          case kPOSButtonTypeMainSerialNr:  
-            procstr = procstr & "TouchScreenMainSerialNr"; 
-          case kPOSButtonTypeAppleWarrantyStatusCheck:  
-            procstr = procstr & "TouchScreenAppleWarrantyStatusCheck"; 
+      case kPOSButtonTypeMainSerialNr:  
+        procstr = procstr & "TouchScreenMainSerialNr";
+      case kPOSButtonTypeAppleWarrantyStatusCheck:  
+        procstr = procstr & "TouchScreenAppleWarrantyStatusCheck";
       case kPOSButtonTypeAppleCreateAEOrder:  
-        procstr = procstr & "TouchScreenAppleCreateAEOrder"; 
+        procstr = procstr & "TouchScreenAppleCreateAEOrder";
       case kPOSButtonTypeAppleCancelAEOrder:  
         procstr = procstr & "TouchScreenAppleCancelAEOrder";
       case kPOSButtonTypeLogin:  
