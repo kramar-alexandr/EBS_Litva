@@ -1078,6 +1078,8 @@ begin
   RlCol(350,350,"IBAN",IBAN,false);
   RlCol(460,460,"Name",RecName,false);
   RlCol(660,660,"Cmt",Ustrd,false);
+  RlCol(-320,-320,"PrvtId",PrvtId,false);
+  RlCol(-250,-250,"OrgId",OrgId,false);
   RlColKey(-180,-180,"D/C",CdtDbtInd,false,CdtDbtInd);
   RlCol(-130,-130,"AmtCcy",AmtCcy,false);
   RlCol(-60,-60,"Curncy",CurncyCode,true);
@@ -1106,6 +1108,8 @@ begin
   EditField(h=100,v+=vs,150,"D/C",ViewOnly,CdtDbtInd,false,0);
   EditField(h=100,v+=vs,150,"Ammount",ViewOnly,AmtCcy,false,0);
   EditField(h=100,v+=vs,150,"Curncy",ViewOnly,CurncyCode,false,0); 
+  EditField(h=100,v+=vs,150,"OrgId",ViewOnly,OrgId,false,0); 
+  EditField(h=100,v+=vs,150,"PrvtId",ViewOnly,PrvtId,false,0); 
   
   SearchField("Search");
   EndWindow;
@@ -1150,6 +1154,8 @@ begin
   RlCol(350,350,"IBAN",IBAN,false);
   RlCol(460,460,"Name",RecName,false);
   RlCol(660,660,"Cmt",Ustrd,false);
+  RlCol(-320,-320,"PrvtId",PrvtId,false);
+  RlCol(-250,-250,"OrgId",OrgId,false);
   RlColKey(-180,-180,"D/C",CdtDbtInd,false,CdtDbtInd);
   RlCol(-130,-130,"AmtCcy",AmtCcy,false);
   RlCol(-60,-60,"Curncy",CurncyCode,true);
@@ -1178,6 +1184,8 @@ begin
   EditField(h=100,v+=vs,150,"D/C",ViewOnly,CdtDbtInd,false,0);
   EditField(h=100,v+=vs,150,"Ammount",ViewOnly,AmtCcy,false,0);
   EditField(h=100,v+=vs,150,"Curncy",ViewOnly,CurncyCode,false,0); 
+  EditField(h=100,v+=vs,150,"OrgId",ViewOnly,OrgId,false,0); 
+  EditField(h=100,v+=vs,150,"PrvtId",ViewOnly,PrvtId,false,0);
   
   SearchField("Search");
   EndWindow;

@@ -48,9 +48,14 @@ begin
 					ndat.day = stringtoint(right(bookdate,2));
 					SWIr.BookgDt = ndat;
 					SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
-					SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
-					if(blank(SWIr.IBAN))then begin
+					if(SWIr.CdtDbtInd=="DBIT")then begin
+						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
+					end else begin
+						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
 						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+						SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
+						SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
 					end;
 					SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
 
@@ -58,7 +63,7 @@ begin
 					SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
 					SWIr.CurncyCode = CurCode;
 					logtext(0,"TryToSabe SWIr " & SWIr.OwnID & " - " & SWIr.BankID & " - " & SWIr.NtryRef);
-					//recordstore(SWIr,true);
+					recordstore(SWIr,true);
 				end else begin
 					recordnew(SWIr);
 					dcf = 1;
@@ -72,11 +77,14 @@ begin
 					ndat.month = stringtoint(mid(bookdate,5,2));
 					ndat.day = stringtoint(right(bookdate,2));
 					SWIr.BookgDt = ndat;
-					SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
-					SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Nm");
-					if(blank(SWIr.IBAN))then begin
-						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+					if(SWIr.CdtDbtInd=="DBIT")then begin
+						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
+					end else begin
 						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
+						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+						SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
+						SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
 					end;
 					SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
 					SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
@@ -84,7 +92,7 @@ begin
 					SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
 					SWIr.CurncyCode = CurCode;
 					logtext(0,"TryToSabe SWIr " & SWIr.OwnID & " - " & SWIr.BankID & " - " & SWIr.NtryRef);
-					//recordstore(SWIr,true);
+					recordstore(SWIr,true);
 				end;
 				
 	
@@ -142,15 +150,19 @@ begin
 					dcf = 1;
 					AmtCcy = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt");
 					CurCode = XmlGetAttribute(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt","Ccy");
-					bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/Dt");
+					bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/DtTm");
 					ndat.year = stringtoint(left(bookdate,4));
 					ndat.month = stringtoint(mid(bookdate,5,2));
-					ndat.day = stringtoint(right(bookdate,2));
+					ndat.day = stringtoint(mid(bookdate,8,2));
 					SBIr.BookgDt = ndat;
 					SBIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
-					SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
-					if(blank(SBIr.IBAN))then begin
+					if(SBIr.CdtDbtInd=="DBIT")then begin
+						SBIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+						SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
+					end else begin
+						SBIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
 						SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+						SBIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
 					end;
 					SBIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
 
@@ -158,7 +170,7 @@ begin
 					SBIr.AmtCcy = evaltoval(AmtCcy)*dcf;
 					SBIr.CurncyCode = CurCode;
 					logtext(0,"TryToSabe SBIr " & SBIr.OwnID & " - " & SBIr.BankID & " - " & SBIr.NtryRef);
-					//recordstore(SBIr,true);
+					recordstore(SBIr,true);
 				end else begin
 					recordnew(SBIr);
 					dcf = 1;
@@ -167,20 +179,23 @@ begin
 					SBIr.NtryRef = NtryRef;
 					AmtCcy = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt");
 					CurCode = XmlGetAttribute(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt","Ccy");
-					bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/Dt");
+					bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/DtTm");
 					ndat.year = stringtoint(left(bookdate,4));
 					ndat.month = stringtoint(mid(bookdate,5,2));
-					ndat.day = stringtoint(right(bookdate,2));
+					ndat.day = stringtoint(mid(bookdate,8,2));
 					SBIr.BookgDt = ndat;
-					SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
-					SBIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Nm");
-					if(blank(SBIr.IBAN))then begin
-						SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
-						SBIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
-					end;
+
 					SBIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
 					SBIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
-					
+					if(SBIr.CdtDbtInd=="DBIT")then begin
+						SBIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+						SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
+					end else begin
+						SBIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
+						SBIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+						SBIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
+						SBIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
+					end;
 					SBIr.AmtCcy = evaltoval(AmtCcy)*dcf;
 					SBIr.CurncyCode = CurCode;
 					logtext(0,"TryToSabe SBIr " & SBIr.OwnID & " - " & SBIr.BankID & " - " & SBIr.NtryRef);
@@ -228,7 +243,7 @@ begin
 	remsum = SWIr.AmtCcy;
 	
 	logtext(0,"SwedbankImportVcRecordSave");
-	
+	//SWIr.IPNr = 1;
 	if(SWIr.IPNr<0)then begin
 		if(SWIr.CdtDbtInd=="CRDT")then begin
 			recordnew(IPr);
@@ -240,6 +255,11 @@ begin
 				while(loopmain(CUr,1,TrHs))begin
 					if(CUr.CUType==1 and TrHs)then begin
 						if(CUr.IBANCode==SWIr.IBAN or CUr.BankAccount==SWIr.IBAN or CUr.Bank==SWIr.IBAN)then begin
+							TrHs = false;
+							cufnd = true;
+							cucode = CUr.Code;
+						end;
+						if(nonblank(SWIr.OrgId) and SWIr.OrgId==CUr.RegNr1)then begin
 							TrHs = false;
 							cufnd = true;
 							cucode = CUr.Code;
@@ -405,11 +425,9 @@ begin
 	val remsum;
 	record ARVc ARr;
 	val chk;
-	
-	logtext(0,"SEBbankImportVcRecordSave");
-	
+		
 	remsum = SBIr.AmtCcy;
-	
+	//SBIr.IPNr = 1;
 	if(SBIr.IPNr<0)then begin
 		if(SBIr.CdtDbtInd=="CRDT")then begin
 			recordnew(IPr);
@@ -421,6 +439,12 @@ begin
 				while(loopmain(CUr,1,TrHs))begin
 					if(CUr.CUType==1 and TrHs)then begin
 						if(CUr.IBANCode==SBIr.IBAN or CUr.BankAccount==SBIr.IBAN or CUr.Bank==SBIr.IBAN)then begin
+							TrHs = false;
+							cufnd = true;
+							cucode = CUr.Code;
+						end;
+						
+						if(nonblank(SBIr.OrgId) and SBIr.OrgId==CUr.RegNr1)then begin
 							TrHs = false;
 							cufnd = true;
 							cucode = CUr.Code;
@@ -572,7 +596,7 @@ end;
 
 global updating procedure DelAllDsm()
 begin
-	record SEBbankImportVc SBIr
+	record SEBbankImportVc SBIr;
 	record SwedbankImportVc SWIr;
 	record IPVc IPr;
 	
