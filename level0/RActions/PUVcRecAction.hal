@@ -91,7 +91,7 @@ begin
   BlockLoad(MSb);
   PUr.SerNr = -1;  
   PUr.RegDate = CurrentDate;
-  PUr.TransDate = CurrentDate;
+  //PUr.TransDate = CurrentDate;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 5 June 2018 09:56:54
   PUr.Invalid = 0;
   //START-CUST PST 2016-May-18
   PUr.User = CurrentUser;
@@ -823,7 +823,8 @@ begin
   end;
   if (SerNrTestPUVc(PUr.SerNr,PUr.TransDate,gentrans)==false) then begin
     if (check>0) then begin
-    RecordCheckError(1557,"",-1,"SerNr");      
+    //RecordCheckError(1557,"",-1,"SerNr"); // Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 8 June 2018 13:48:54
+    RecordCheckError(1000104,"",-1,"SerNr");     // Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 8 June 2018 13:49:04 
     res = -1;
     goto L99PUVcRecordCheck;
   end;

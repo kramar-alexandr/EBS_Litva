@@ -99,6 +99,7 @@ begin
   //SString(1000102,"NEKREDITUOKITE áIOS S„SKAITOS!!!"); //IGE HAL-385
   SString(1000102,"NEKREDITUOKITE áIOS S„SKAITOS, ji su neatnaujintu sand˜liu Ñ kreiptis pagalbos ° uì kasˆ atsakingˆ asmen°"); // Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 11 January 2018 16:59:10
   SString(1000103,"Negali bðti ta pati patalpa"); // Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 22 January 2018 10:11:18
+  SString(1000104,"¯veskite tokiˆ datˆ, kokia yra nurodyta gavimo sˆskaitoje"); // Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 8 June 2018 13:48:28
 
   
   StrSetBegin(3); /* Try to keep them in alphabetical order */
