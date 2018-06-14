@@ -78,6 +78,7 @@ begin
 					ndat.month = stringtoint(mid(bookdate,5,2));
 					ndat.day = stringtoint(right(bookdate,2));
 					SWIr.BookgDt = ndat;
+					SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
 					if(SWIr.CdtDbtInd=="DBIT")then begin
 						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
 						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
@@ -89,8 +90,6 @@ begin
 						SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
 					end;
 					SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
-					SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
-					
 					SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
 					SWIr.CurncyCode = CurCode;
 					logtext(0,"TryToSabe SWIr " & SWIr.OwnID & " - " & SWIr.BankID & " - " & SWIr.NtryRef);
@@ -168,8 +167,6 @@ begin
 						SBIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
 					end;
 					SBIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
-
-					
 					SBIr.AmtCcy = evaltoval(AmtCcy)*dcf;
 					SBIr.CurncyCode = CurCode;
 					logtext(0,"TryToSabe SBIr " & SBIr.OwnID & " - " & SBIr.BankID & " - " & SBIr.NtryRef);
@@ -553,7 +550,7 @@ begin
 				
 				instr = ParseInvStr(SBIr.Ustrd);
 								
-				if(nonblank(cucode))then begin
+			if(nonblank(cucode))then begin
 				
 				ARr.CustCode = cucode;
 				TrHs = true;
@@ -591,7 +588,7 @@ begin
 								end;
 								k=k+1;
 							end;
-							if(setinset(ARr.OfficialSerNr,instr))then begin
+							if(setinset(ARr.OfficialSerNr,instr) and nonblank(ARr.OfficialSerNr))then begin
 								clearrow(IPr,IPrw,1);
 								IPrw.InvoiceNr = ARr.InvoiceNr;
 								matrowput(IPr,k,IPrw);
