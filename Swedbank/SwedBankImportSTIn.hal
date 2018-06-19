@@ -4,6 +4,9 @@ remote inner function Boolean PasteInvIn2IPr(var record IPVc,Integer,Date,var va
 remote inner procedure IPVc_PasteRecCurncy(var record IPVc,Integer);
 remote inner procedure IPVc_PasteRecVal(var record IPVc,Integer);
 remote inner procedure IPVc_PasteBankCurncy(var record IPVc,Integer);
+external function string 255 BPI_ParseInvStr(string);
+external procedure FindCustomerByIBAN(string,string,var string,var boolean);
+external procedure BankFillIProws(var record IPVc,var integer,string,string,var val,string,boolean,string);
 
 
 global updating procedure SwedBankImportSTIn()
@@ -38,70 +41,80 @@ begin
 				SWIr.OwnID = OwnID;
 				SWIr.BankID = BankID;
 				SWIr.NtryRef = NtryRef;
-				if(readfirstmain(SWIr,3,true))then begin
-					dcf = 1;
-					AmtCcy = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt");
-					CurCode = XmlGetAttribute(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt","Ccy");
-					bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/Dt");
-					ndat.year = stringtoint(left(bookdate,4));
-					ndat.month = stringtoint(mid(bookdate,5,2));
-					ndat.day = stringtoint(right(bookdate,2));
-					SWIr.BookgDt = ndat;
-					SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
-					if(SWIr.CdtDbtInd=="DBIT")then begin
-						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
-						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
-						SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Id/OrgId/Othr/Id");
-					end else begin
-						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
-						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
-						SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
-						SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
-					end;
-					SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
-
-					
-					SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
-					SWIr.CurncyCode = CurCode;
-					logtext(0,"TryToSabe SWIr " & SWIr.OwnID & " - " & SWIr.BankID & " - " & SWIr.NtryRef);
-					recordstore(SWIr,true);
-				end else begin
-					recordnew(SWIr);
-					dcf = 1;
+				if(nonblank(OwnID) and nonblank(BankID) and nonblank(NtryRef))then begin
 					SWIr.OwnID = OwnID;
 					SWIr.BankID = BankID;
 					SWIr.NtryRef = NtryRef;
-					AmtCcy = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt");
-					CurCode = XmlGetAttribute(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt","Ccy");
-					bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/Dt");
-					ndat.year = stringtoint(left(bookdate,4));
-					ndat.month = stringtoint(mid(bookdate,5,2));
-					ndat.day = stringtoint(right(bookdate,2));
-					SWIr.BookgDt = ndat;
-					SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
-					if(SWIr.CdtDbtInd=="DBIT")then begin
-						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+					if(readfirstmain(SWIr,3,true))then begin
+						dcf = 1;
+						AmtCcy = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt");
+						CurCode = XmlGetAttribute(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt","Ccy");
+						bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/Dt");
+						ndat.year = stringtoint(left(bookdate,4));
+						ndat.month = stringtoint(mid(bookdate,5,2));
+						ndat.day = stringtoint(right(bookdate,2));
+						SWIr.BookgDt = ndat;
+						SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
 						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
-						SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Id/OrgId/Othr/Id");
+						SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
+						if(SWIr.CdtDbtInd=="DBIT")then begin
+							SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+							SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
+							SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Id/OrgId/Othr/Id");
+							if(blank(SWIr.RecName) and blank(SWIr.IBAN))then begin
+								SWIr.PayType = "BFIS";
+							end;
+						end else begin
+							SWIr.PayType = "CUST";
+							SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
+							SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+							SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
+							SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
+						end;
+					
+
+					
+						SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
+						SWIr.CurncyCode = CurCode;
+						recordstore(SWIr,true);
 					end else begin
-						SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
-						SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
-						SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
-						SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
+						recordnew(SWIr);
+						dcf = 1;
+						SWIr.OwnID = OwnID;
+						SWIr.BankID = BankID;
+						SWIr.NtryRef = NtryRef;
+						AmtCcy = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt");
+						CurCode = XmlGetAttribute(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/Amt","Ccy");
+						bookdate = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/BookgDt/Dt");
+						ndat.year = stringtoint(left(bookdate,4));
+						ndat.month = stringtoint(mid(bookdate,5,2));
+						ndat.day = stringtoint(right(bookdate,2));
+						SWIr.BookgDt = ndat;
+						SWIr.CdtDbtInd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/CdtDbtInd");
+						if(SWIr.CdtDbtInd=="DBIT")then begin
+							SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Nm");
+							SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/CdtrAcct/Id/IBAN");
+							SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Cdtr/Id/OrgId/Othr/Id");
+							if(blank(SWIr.RecName) and blank(SWIr.IBAN))then begin
+								SWIr.PayType = "BFIS";
+							end;
+						end else begin
+							SWIr.PayType = "CUST";
+							SWIr.RecName = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Nm");
+							SWIr.IBAN = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/DbtrAcct/Id/IBAN");
+							SWIr.OrgId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/OrgId/Othr/Id");
+							SWIr.PrvtId = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RltdPties/Dbtr/Id/PrvtId/Othr/Id");
+						end;
+						SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
+					
+						SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
+						SWIr.CurncyCode = CurCode;
+					
+						recordstore(SWIr,true);
 					end;
-					SWIr.Ustrd = XmlGet(xdata,"Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryDtls/TxDtls/RmtInf/Ustrd");
-					SWIr.AmtCcy = evaltoval(AmtCcy)*dcf;
-					SWIr.CurncyCode = CurCode;
-					logtext(0,"TryToSabe SWIr " & SWIr.OwnID & " - " & SWIr.BankID & " - " & SWIr.NtryRef);
-					recordstore(SWIr,true);
 				end;
-				
-	
 			end else begin
-				
-				
 			end;
-	  	
 	end; 
 	
 	
@@ -221,93 +234,6 @@ begin
 return;
 end;
 
-function string 255 ParseInvStr(string Ustrd)
-begin
-	integer i;
-	string 255 instr,c;
-	
-	For(i=0;i<len(Ustrd);i=i+1) begin
-		c = mid(Ustrd,i,1);
-		if(asc(c)>47 and asc(c)<58)then begin
-			instr = instr & c;
-		end;
-		if(c=="-")then begin
-			instr = instr & c;
-		end;
-		if(c=="/")then begin
-			instr = instr & c;
-		end;
-		if(c>="A" and c<="Z")then begin
-			instr = instr & c;
-		end;
-		
-		if(c=="," or c=="." or c==" " or c==";")then begin
-			instr = instr & ",";
-		end;
-	end; 
-	if(len(instr)>1)then begin
-		For(i=0;i<len(instr)-1;i=i+1) begin
-			c = mid(instr,i,2);
-			if(c==",,")then begin
-				instr = left(instr,i) & right(instr,len(instr)-i-1);
-				i=i-1;
-			end;
-		end;
-	end;
-	if(left(instr,1)==",")then begin
-		instr = right(instr,len(instr)-1);
-	end;
-	if(right(instr,1)==",")then begin
-		instr = left(instr,len(instr)-1);
-	end;
-	
-	ParseInvStr = instr;
-return;
-end;
-
-procedure FindCustomerByIBAN(string IBAN, string OrgId, var string cucode,var boolean cufnd)
-begin
-	boolean TrHs;
-	record LetVc Letr;
-	record CUVc CUr;
-	
-	TrHs = true;
-	if(nonblank(IBAN) or nonblank(OrgId))then begin
-		while(loopmain(CUr,1,TrHs))begin
-			if(CUr.CUType==1 and TrHs)then begin
-				if(nonblank(IBAN))then begin
-					if(CUr.IBANCode==IBAN or CUr.BankAccount==IBAN or CUr.Bank==IBAN)then begin
-						TrHs = false;
-						cufnd = true;
-						cucode = CUr.Code;
-					end;
-				end;
-				if(nonblank(OrgId) and OrgId==CUr.RegNr1)then begin
-					TrHs = false;
-					cufnd = true;
-					cucode = CUr.Code;
-				end;
-			
-				RecordClear(Letr);
-				AddToText(CUr.InvAddr0 & ";",Letr);
-				AddToText(CUr.InvAddr1 & ";",Letr);
-				AddToText(CUr.InvAddr2 & ";",Letr);
-				AddToText(CUr.InvAddr3 & ";",Letr);
-				AddToText(CUr.InvAddr4 & ";",Letr);
-			
-				if(StringInText(IBAN,Letr))then begin
-					TrHs = false;
-					cufnd = true;
-					cucode = CUr.Code;
-				end;
-			
-			end;
-		end;
-	end;
-	
-return;
-end;
-
 global
 updating function LongInt SwedbankImportVcRecordSave(var record SwedbankImportVc SWIr,record SwedbankImportVc SWI2r,LongInt stat,LongInt long4)
 begin
@@ -334,160 +260,16 @@ begin
 		if(SWIr.CdtDbtInd=="CRDT")then begin
 			recordnew(IPr);
 			IPr.Comment = "SWEDBANK: " & SWIr.Ustrd;
-			IPr.SerNr = NextSerNr("IPVc",IPr.TransDate,-1,false,"");		
 			IPr.TransDate = SWIr.BookgDt;	 
+			IPr.SerNr = NextSerNr("IPVc",IPr.TransDate,-1,false,"");		
+			
 			CUr.Code = "";
 			
 			FindCustomerByIBAN(SWIr.IBAN,SWIr.OrgId,cucode,cufnd);
 			
-			instr = ParseInvStr(SWIr.Ustrd);
+			instr = BPI_ParseInvStr(SWIr.Ustrd);
 
-			if(nonblank(cucode))then begin
-				
-				ARr.CustCode = cucode;
-				TrHs = true;
-				while(loopkey("CustCode",ARr,1,TrHs))begin
-					if(ARr.CustCode!=cucode)then begin TrHs = false; end;
-					
-					if(TrHs)then begin
-						if(remsum>0)then begin
-							if(setinset(ARr.InvoiceNr,instr))then begin
-								clearrow(IPr,IPrw,1);
-								IPrw.InvoiceNr = ARr.InvoiceNr;
-								matrowput(IPr,k,IPrw);
-								PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
-								matrowget(IPr,k,IPrw);
-								IPrw.CustName = SWIr.RecName;
-								IPrw.RecCurncy = SWIr.CurncyCode;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteBankCurncy(IPr,k);
-								matrowget(IPr,k,IPrw);
-								if(IPrw.BankVal>=remsum)then begin
-									IPrw.BankVal = remsum;
-									IPrw.RecVal = remsum;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = 0;
-								end;
-								if(IPrw.RecVal<remsum)then begin
-									IPrw.BankVal = IPrw.RecVal;
-									IPrw.RecVal = IPrw.RecVal;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = remsum - IPrw.RecVal;
-								end;
-								k=k+1;
-							end;
-							if(setinset(ARr.OfficialSerNr,instr))then begin
-								clearrow(IPr,IPrw,1);
-								IPrw.InvoiceNr = ARr.InvoiceNr;
-								matrowput(IPr,k,IPrw);
-								PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
-								matrowget(IPr,k,IPrw);
-								IPrw.CustName = SWIr.RecName;
-								IPrw.RecCurncy = SWIr.CurncyCode;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteBankCurncy(IPr,k);
-								matrowget(IPr,k,IPrw);
-								if(IPrw.BankVal>=remsum)then begin
-									IPrw.BankVal = remsum;
-									IPrw.RecVal = remsum;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = 0;
-								end;
-								if(IPrw.RecVal<remsum)then begin
-									IPrw.BankVal = IPrw.RecVal;
-									IPrw.RecVal = IPrw.RecVal;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = remsum - IPrw.RecVal;
-								end;
-								k=k+1;
-							end;
-						end;
-					end;
-				end;
-				resetloop(ARr);
-				
-				/*pos = 0;
-				*/
-			
-			end else begin
-				ExtractObj(instr,pos,ostr);
-				while(nonblank(ostr))begin
-					if(nonblank(ostr))then begin
-						ARr.InvoiceNr = stringtolongint(ostr);
-						if(readfirstmain(ARr,1,true))then begin
-							clearrow(IPr,IPrw,1);
-							IPrw.InvoiceNr = ARr.InvoiceNr;
-							matrowput(IPr,k,IPrw);
-							PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
-							matrowget(IPr,k,IPrw);
-							IPrw.CustName = SWIr.RecName;
-							IPrw.RecCurncy = SWIr.CurncyCode;
-							matrowput(IPr,k,IPrw);
-							IPVc_PasteBankCurncy(IPr,k);
-							matrowget(IPr,k,IPrw);
-							if(IPrw.BankVal>=remsum)then begin
-								IPrw.BankVal = remsum;
-								IPrw.RecVal = remsum;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteRecVal(IPr,k);
-								matrowget(IPr,k,IPrw);
-								remsum = 0;
-							end;
-							if(IPrw.RecVal<remsum)then begin
-								IPrw.BankVal = IPrw.RecVal;
-								IPrw.RecVal = IPrw.RecVal;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteRecVal(IPr,k);
-								matrowget(IPr,k,IPrw);
-								remsum = remsum - IPrw.RecVal;
-							end;
-							k=k+1;
-						end;
-					end;
-					ExtractObj(instr,pos,ostr);
-				end;
-			end;
-
-			if(remsum>0)then begin
-				if(cufnd)then begin
-					clearrow(IPr,IPrw,1);
-					CUr.Code = cucode;
-					readfirstmain(CUr,1,true);
-					clearrow(IPr,IPrw,1);
-					IPrw.CustCode = CUr.Code;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteCustCode(IPr,0,error);
-					matrowget(IPr,k,IPrw);
-					IPrw.RecCurncy = SWIr.CurncyCode;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteBankCurncy(IPr,k);
-					matrowget(IPr,k,IPrw);
-					IPrw.RecVal = remsum;
-					IPrw.BankVal = remsum;
-					IPrw.CustName = SWIr.RecName;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteRecVal(IPr,k);
-				end else begin
-					clearrow(IPr,IPrw,1);
-					IPrw.BankCurncy = SWIr.CurncyCode;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteBankCurncy(IPr,k);
-					matrowget(IPr,k,IPrw);
-					IPrw.BankVal = remsum;
-					IPrw.RecVal = remsum;
-					IPrw.CustName = SWIr.RecName;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteRecVal(IPr,k);
-				end;
-			end;
+			BankFillIProws(IPr,k,SWIr.RecName,SWIr.CurncyCode,remsum,cucode,cufnd,instr);
 			if(recordstore(IPr,true))begin
 				SWIr.IPNr = IPr.SerNr;
 			end;
@@ -542,156 +324,16 @@ begin
 		if(SBIr.CdtDbtInd=="CRDT")then begin
 			recordnew(IPr);
 			IPr.Comment = "SEBBANK: " & SBIr.Ustrd;
-			IPr.SerNr = NextSerNr("IPVc",IPr.TransDate,-1,false,"");		
 			IPr.TransDate = SBIr.BookgDt;	 
-				CUr.Code = "";
+			IPr.SerNr = NextSerNr("IPVc",IPr.TransDate,-1,false,"");		
+			
+			CUr.Code = "";
 				
-				FindCustomerByIBAN(SBIr.IBAN,SBIr.OrgId,cucode,cufnd);
-				
-				instr = ParseInvStr(SBIr.Ustrd);
+			FindCustomerByIBAN(SBIr.IBAN,SBIr.OrgId,cucode,cufnd);
+			
+			instr = BPI_ParseInvStr(SBIr.Ustrd);
 								
-			if(nonblank(cucode))then begin
-				
-				ARr.CustCode = cucode;
-				TrHs = true;
-				while(loopkey("CustCode",ARr,1,TrHs))begin
-					if(ARr.CustCode!=cucode)then begin TrHs = false; end;
-					
-					if(TrHs)then begin
-						if(remsum>0)then begin
-							if(setinset(ARr.InvoiceNr,instr))then begin
-								clearrow(IPr,IPrw,1);
-								IPrw.InvoiceNr = ARr.InvoiceNr;
-								matrowput(IPr,k,IPrw);
-								PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
-								matrowget(IPr,k,IPrw);
-								IPrw.CustName = SBIr.RecName;
-								IPrw.RecCurncy = SBIr.CurncyCode;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteBankCurncy(IPr,k);
-								matrowget(IPr,k,IPrw);
-								if(IPrw.BankVal>=remsum)then begin
-									IPrw.BankVal = remsum;
-									IPrw.RecVal = remsum;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = 0;
-								end;
-								if(IPrw.RecVal<remsum)then begin
-									IPrw.BankVal = IPrw.RecVal;
-									IPrw.RecVal = IPrw.RecVal;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = remsum - IPrw.RecVal;
-								end;
-								k=k+1;
-							end;
-							if(setinset(ARr.OfficialSerNr,instr) and nonblank(ARr.OfficialSerNr))then begin
-								clearrow(IPr,IPrw,1);
-								IPrw.InvoiceNr = ARr.InvoiceNr;
-								matrowput(IPr,k,IPrw);
-								PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
-								matrowget(IPr,k,IPrw);
-								IPrw.CustName = SBIr.RecName;
-								IPrw.RecCurncy = SBIr.CurncyCode;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteBankCurncy(IPr,k);
-								matrowget(IPr,k,IPrw);
-								if(IPrw.BankVal>=remsum)then begin
-									IPrw.BankVal = remsum;
-									IPrw.RecVal = remsum;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = 0;
-								end;
-								if(IPrw.RecVal<remsum)then begin
-									IPrw.BankVal = IPrw.RecVal;
-									IPrw.RecVal = IPrw.RecVal;
-									matrowput(IPr,k,IPrw);
-									IPVc_PasteRecVal(IPr,k);
-									matrowget(IPr,k,IPrw);
-									remsum = remsum - IPrw.RecVal;
-								end;
-								k=k+1;
-							end;
-						end;
-					end;
-				end;
-				resetloop(ARr);
-			end else begin
-				ExtractObj(instr,pos,ostr);
-				while(nonblank(ostr))begin
-					if(nonblank(ostr))then begin
-						ARr.InvoiceNr = stringtolongint(ostr);
-						if(readfirstmain(ARr,1,true))then begin
-							clearrow(IPr,IPrw,1);
-							IPrw.InvoiceNr = ARr.InvoiceNr;
-							matrowput(IPr,k,IPrw);
-							PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
-							matrowget(IPr,k,IPrw);
-							IPrw.CustName = SBIr.RecName;
-							IPrw.RecCurncy = SBIr.CurncyCode;
-							matrowput(IPr,k,IPrw);
-							IPVc_PasteBankCurncy(IPr,k);
-							matrowget(IPr,k,IPrw);
-							if(IPrw.BankVal>=remsum)then begin
-								IPrw.BankVal = remsum;
-								IPrw.RecVal = remsum;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteRecVal(IPr,k);
-								matrowget(IPr,k,IPrw);
-								remsum = 0;
-							end;
-							if(IPrw.RecVal<remsum)then begin
-								IPrw.BankVal = IPrw.RecVal;
-								IPrw.RecVal = IPrw.RecVal;
-								matrowput(IPr,k,IPrw);
-								IPVc_PasteRecVal(IPr,k);
-								matrowget(IPr,k,IPrw);
-								remsum = remsum - IPrw.RecVal;
-							end;
-							k=k+1;
-						end;
-					end;
-					ExtractObj(instr,pos,ostr);
-				end;
-			end;
-
-			if(remsum>0)then begin
-				if(cufnd)then begin
-					clearrow(IPr,IPrw,1);
-					CUr.Code = cucode;
-					readfirstmain(CUr,1,true);
-					clearrow(IPr,IPrw,1);
-					IPrw.CustCode = CUr.Code;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteCustCode(IPr,0,error);
-					matrowget(IPr,k,IPrw);
-					IPrw.RecCurncy = SBIr.CurncyCode;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteBankCurncy(IPr,k);
-					matrowget(IPr,k,IPrw);
-					IPrw.RecVal = remsum;
-					IPrw.BankVal = remsum;
-					IPrw.CustName = SBIr.RecName;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteRecVal(IPr,k);
-				end else begin
-					clearrow(IPr,IPrw,1);
-					IPrw.BankCurncy = SBIr.CurncyCode;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteBankCurncy(IPr,k);
-					matrowget(IPr,k,IPrw);
-					IPrw.BankVal = remsum;
-					IPrw.RecVal = remsum;
-					IPrw.CustName = SBIr.RecName;
-					matrowput(IPr,k,IPrw);
-					IPVc_PasteRecVal(IPr,k);
-				end;
-			end;
+			BankFillIProws(IPr,k,SBIr.RecName,SBIr.CurncyCode,remsum,cucode,cufnd,instr);
 			if(recordstore(IPr,true))begin
 				SBIr.IPNr = IPr.SerNr;
 			end;
